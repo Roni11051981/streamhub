@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>STREAMHUB</title>
 
-  <!-- Web-App / Home-Screen Einstellungen für iPhone (iOS) & Android -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="StreamHub">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#08090c">
 
-  <!-- HLS.js für spätere mHub/M3U8 Streams -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
@@ -39,13 +37,22 @@
       user-select: none;
     }
 
+    /* Fokus-Ring für TV-Fernbedienung */
+    .tv-focusable:focus {
+      outline: none !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 0 3px #ffffff, 0 12px 28px rgba(229, 9, 20, 0.65) !important;
+      transform: scale(1.06);
+      z-index: 50;
+    }
+
     /* =========================================================
-       1. NETFLIX-STYLE PROFILWAND (15 Benutzer in 3 Reihen)
+       1. PROFILWAND (Dynamisch bis 15 Benutzer)
        ========================================================= */
     #profile-gate {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 50% 15%, rgba(229, 9, 20, 0.16), transparent 65%), var(--bg);
+      background: radial-gradient(circle at 50% 15%, rgba(229, 9, 20, 0.15), transparent 65%), var(--bg);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -54,231 +61,191 @@
       padding: 30px 20px;
       overflow-y: auto;
     }
-    .gate-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .gate-header { text-align: center; margin-bottom: 30px; }
     .gate-logo {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      color: var(--accent);
-      margin-bottom: 8px;
+      font-size: 1.9rem; font-weight: 900; letter-spacing: 3px;
+      color: var(--accent); margin-bottom: 8px;
       text-shadow: 0 0 20px rgba(229, 9, 20, 0.5);
     }
-    .gate-title {
-      font-size: clamp(1.5rem, 3vw, 2.4rem);
-      font-weight: 700;
-      margin: 0;
-      color: #f8fafc;
-    }
+    .gate-title { font-size: clamp(1.5rem, 3vw, 2.3rem); font-weight: 700; margin: 0; color: #f8fafc; }
 
-    /* 5 Spalten x 3 Reihen am TV/PC = 15 Profile */
     .profiles-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(110px, 135px));
-      gap: 22px 26px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 135px));
+      gap: 24px 28px;
       max-width: 820px;
       width: 100%;
       justify-content: center;
-      padding: 10px;
+      padding: 12px;
     }
 
     .profile-card {
       background: transparent;
-      border: none;
+      border: 3px solid transparent;
+      border-radius: 18px;
       color: var(--text-dim);
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      padding: 0;
+      padding: 8px;
       outline: none;
-      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: transform 0.18s ease, border-color 0.18s ease;
     }
     .profile-avatar {
-      width: 112px;
-      height: 112px;
-      border-radius: 14px;
+      width: 110px;
+      height: 110px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 2.8rem;
       position: relative;
-      border: 4px solid transparent;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.65);
       overflow: hidden;
+      background-size: cover;
+      background-position: center;
     }
-    /* Glanz-Effekt wie auf den Netflix-Icons */
     .profile-avatar::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 55%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 55%);
       pointer-events: none;
     }
+    .profile-avatar.add-new {
+      background: rgba(255,255,255,0.05);
+      border: 2px dashed rgba(255,255,255,0.25);
+      color: var(--text-dim);
+      font-size: 2.6rem;
+    }
     .role-tag {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      background: rgba(0,0,0,0.75);
-      color: #fff;
-      font-size: 0.6rem;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      position: absolute; bottom: 6px; right: 6px;
+      background: rgba(0,0,0,0.8); color: #fff;
+      font-size: 0.6rem; font-weight: 800; padding: 2px 6px;
+      border-radius: 4px; text-transform: uppercase; z-index: 2;
     }
     .profile-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-dim);
-      transition: color 0.2s;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 125px;
+      font-size: 0.96rem; font-weight: 600; color: var(--text-dim);
+      text-align: center; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; max-width: 120px;
     }
-
-    /* Fokus für TV-Fernbedienung & Maus */
-    .profile-card:hover, .profile-card:focus {
-      transform: scale(1.08);
-    }
-    .profile-card:hover .profile-avatar,
-    .profile-card:focus .profile-avatar {
-      border-color: #ffffff;
-      box-shadow: 0 14px 32px rgba(0,0,0,0.9), 0 0 20px rgba(229, 9, 20, 0.5);
-    }
-    .profile-card:hover .profile-name,
-    .profile-card:focus .profile-name {
-      color: #ffffff;
-    }
+    .profile-card:focus .profile-name,
+    .profile-card:hover .profile-name { color: #ffffff; }
 
     /* =========================================================
-       2. CODE-ABFRAGE MODAL (Nach Klick auf ein Profilbild)
+       2. MODALS (Login, Neuer Benutzer & Profilbild-Auswahl)
        ========================================================= */
-    #auth-modal {
+    .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(8, 9, 12, 0.88);
+      background: rgba(8, 9, 12, 0.92);
       backdrop-filter: blur(16px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 6000;
       padding: 20px;
+      overflow-y: auto;
     }
-    .auth-box {
+    .modal-card {
       background: #121622;
       border: 1px solid rgba(255,255,255,0.14);
       border-radius: 20px;
-      padding: 36px 34px;
+      padding: 32px 30px;
       width: 100%;
-      max-width: 400px;
+      max-width: 440px;
       text-align: center;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
-      animation: popIn 0.2s ease-out;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.95);
     }
-    @keyframes popIn {
-      from { transform: scale(0.92); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .auth-avatar-preview {
-      width: 84px;
-      height: 84px;
-      border-radius: 14px;
+    .avatar-preview {
+      width: 88px; height: 88px; border-radius: 16px;
       margin: 0 auto 14px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.3rem;
-      border: 3px solid rgba(255,255,255,0.8);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; border: 3px solid rgba(255,255,255,0.85);
+      background-size: cover; background-position: center;
+      position: relative; overflow: hidden;
     }
-    .auth-user-title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin: 0 0 6px 0;
+    .modal-title { font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; }
+    .modal-sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; }
+
+    .input-field {
+      width: 100%; padding: 14px; background: rgba(0,0,0,0.65);
+      border: 2px solid rgba(255,255,255,0.22); border-radius: 10px;
+      color: white; font-size: 1rem; text-align: center; margin-bottom: 12px;
     }
-    .auth-hint {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      margin-bottom: 22px;
+    .error-msg { color: #f87171; font-size: 0.82rem; min-height: 20px; margin-bottom: 10px; }
+
+    .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
+    .btn {
+      flex: 1; padding: 13px 16px; border-radius: 10px; font-size: 0.95rem;
+      font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: 0.15s;
     }
-    .auth-input {
-      width: 100%;
-      padding: 15px;
-      background: rgba(0,0,0,0.6);
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: white;
-      font-size: 1.05rem;
-      text-align: center;
-      letter-spacing: 1px;
+    .btn-ghost { background: rgba(255,255,255,0.09); color: var(--text-dim); }
+    .btn-accent { background: var(--accent); color: white; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
+
+    /* Avatar- & Farb-Auswahl-Gitter */
+    .picker-label {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-dim); margin: 14px 0 8px 0; text-align: left; font-weight: 700;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
       margin-bottom: 12px;
     }
-    .auth-input:focus {
-      border-color: var(--accent);
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.25);
-    }
-    .auth-error {
-      color: #f87171;
-      font-size: 0.82rem;
-      min-height: 20px;
-      margin-bottom: 12px;
-    }
-    .auth-actions {
-      display: flex;
-      gap: 12px;
-    }
-    .btn-cancel, .btn-unlock {
-      flex: 1;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
+    .icon-choice {
+      background: rgba(255,255,255,0.06);
       border: 2px solid transparent;
-      transition: 0.18s;
+      border-radius: 10px;
+      height: 46px;
+      font-size: 1.45rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
     }
-    .btn-cancel {
-      background: rgba(255,255,255,0.08);
-      color: var(--text-dim);
+    .icon-choice.selected { border-color: var(--accent); background: rgba(229,9,20,0.2); }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
     }
-    .btn-unlock {
-      background: var(--accent);
-      color: white;
+    .color-choice {
+      height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer;
     }
-    .btn-cancel:hover, .btn-cancel:focus,
-    .btn-unlock:hover, .btn-unlock:focus {
-      border-color: white;
-      color: white;
-      outline: none;
-      transform: scale(1.03);
+    .color-choice.selected { border-color: white; transform: scale(1.1); }
+
+    .upload-label {
+      display: block; width: 100%; padding: 10px; margin-bottom: 12px;
+      background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.3);
+      border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; cursor: pointer;
     }
 
+    .role-selector {
+      display: flex; gap: 10px; margin-bottom: 12px;
+    }
+    .role-btn {
+      flex: 1; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.06);
+      border: 2px solid transparent; color: var(--text-dim); font-weight: 700; cursor: pointer; font-size: 0.85rem;
+    }
+    .role-btn.selected { border-color: var(--accent); color: white; background: rgba(229,9,20,0.18); }
+
     /* =========================================================
-       3. HAUPT-APP (Sidebar, Hero-Banner & Katalog-Reihen)
+       3. HAUPT-APP (Bereinigtes Produktions-Dashboard)
        ========================================================= */
     #app { display: none; min-height: 100vh; position: relative; }
 
     .sidebar {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
+      position: fixed; top: 0; left: 0; bottom: 0;
       width: var(--sidebar-w);
       background: linear-gradient(90deg, rgba(8,9,12,0.98) 65%, rgba(8,9,12,0.0) 100%);
       z-index: 1500;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 28px 0;
-      transition: width 0.25s ease;
-      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 28px 0; transition: width 0.25s ease; overflow: hidden;
     }
     .sidebar:hover, .sidebar:focus-within {
       width: var(--sidebar-expand);
@@ -303,16 +270,12 @@
     .nav-item .icon { font-size: 1.3rem; width: 24px; text-align: center; flex-shrink: 0; }
     .nav-item .label { opacity: 0; transition: opacity 0.2s; font-weight: 600; }
     .sidebar:hover .nav-item .label, .sidebar:focus-within .nav-item .label { opacity: 1; }
-    .nav-item:hover, .nav-item:focus, .nav-item.active {
-      color: white; background: rgba(255,255,255,0.1);
-    }
-    .nav-item:focus { border-color: white; outline: none; }
+    .nav-item.active { color: white; background: rgba(255,255,255,0.12); }
 
-    /* Top Status Bar */
     .top-bar {
       position: fixed; top: 20px; right: 40px; z-index: 1400;
-      display: flex; align-items: center; gap: 14px;
-      background: rgba(12, 15, 22, 0.78); backdrop-filter: blur(14px);
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(12, 15, 22, 0.82); backdrop-filter: blur(14px);
       padding: 8px 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.12);
     }
     .vpn-indicator { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; font-weight: 600; color: #34d399; }
@@ -320,103 +283,41 @@
     .divider { width: 1px; height: 16px; background: rgba(255,255,255,0.15); }
     .user-switch-btn {
       display: flex; align-items: center; gap: 8px; background: none; border: 2px solid transparent;
-      color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 3px 8px; border-radius: 99px;
+      color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 4px 10px; border-radius: 99px;
     }
-    .user-switch-btn:focus, .user-switch-btn:hover { border-color: white; outline: none; }
     .mini-avatar {
-      width: 26px; height: 26px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+      width: 28px; height: 28px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; background-size: cover; background-position: center; overflow: hidden;
     }
 
-    /* Main Stage & Hero */
-    .main-stage { margin-left: var(--sidebar-w); padding-bottom: 100px; }
-    .hero {
-      position: relative; height: 64vh; min-height: 430px; max-height: 640px;
-      display: flex; align-items: flex-end; padding: 0 50px 50px 40px; overflow: hidden;
+    .main-stage { margin-left: var(--sidebar-w); padding: 110px 50px 100px 45px; }
+    .empty-state-box {
+      background: linear-gradient(135deg, rgba(20, 24, 36, 0.9), rgba(12, 15, 22, 0.95));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 45px 40px;
+      max-width: 720px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     }
-    .hero-backdrop {
-      position: absolute; inset: 0; background-size: cover; background-position: center 25%;
-      transition: background-image 0.4s ease-in-out; z-index: 1;
+    .status-tag {
+      display: inline-block; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
+      padding: 5px 11px; border-radius: 6px; margin-bottom: 14px; text-transform: uppercase;
     }
-    .hero-vignette {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, var(--bg) 0%, rgba(8,9,12,0.85) 40%, rgba(8,9,12,0.2) 100%),
-                  linear-gradient(0deg, var(--bg) 0%, rgba(8,9,12,0.3) 40%, rgba(8,9,12,0.3) 100%);
-      z-index: 2;
-    }
-    .hero-content { position: relative; z-index: 3; max-width: 620px; }
-    .mhub-tag {
-      display: inline-block; background: rgba(229, 9, 20, 0.22); border: 1px solid rgba(229, 9, 20, 0.5);
-      color: #fca5a5; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
-      padding: 5px 11px; border-radius: 6px; margin-bottom: 12px;
-    }
-    .hero-title { font-size: clamp(2rem, 3.8vw, 3.3rem); font-weight: 900; margin: 0 0 12px 0; line-height: 1.05; }
-    .hero-desc { color: #cbd5e1; font-size: 0.98rem; line-height: 1.5; margin: 0 0 24px 0; }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-    .btn-primary, .btn-secondary {
-      padding: 13px 26px; border-radius: 10px; font-size: 0.98rem; font-weight: 700;
-      cursor: pointer; border: 3px solid transparent; transition: 0.18s;
-    }
-    .btn-primary { background: white; color: black; }
-    .btn-secondary { background: rgba(255,255,255,0.16); color: white; }
-    .btn-primary:hover, .btn-primary:focus { background: var(--accent); color: white; border-color: white; outline: none; }
-    .btn-secondary:hover, .btn-secondary:focus { background: rgba(255,255,255,0.28); border-color: white; outline: none; }
+    .empty-title { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 900; margin: 0 0 12px 0; }
+    .empty-desc { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0 0 26px 0; }
+    .action-row { display: flex; gap: 14px; flex-wrap: wrap; }
 
-    /* Reihen & Kacheln */
-    .rows-wrapper { position: relative; z-index: 5; margin-top: -25px; }
-    .media-row { margin-bottom: 34px; padding-left: 40px; }
-    .row-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 12px; }
-    .row-track {
-      display: flex; gap: 18px; overflow-x: auto; padding: 12px 40px 20px 6px;
-      scroll-behavior: smooth; scrollbar-width: none;
-    }
-    .row-track::-webkit-scrollbar { display: none; }
-    .card {
-      position: relative; border-radius: 12px; background: var(--surface);
-      overflow: hidden; cursor: pointer; flex-shrink: 0; border: 3px solid transparent;
-      transition: transform 0.22s ease, box-shadow 0.22s, border-color 0.2s; outline: none;
-    }
-    .card.wide { width: 270px; height: 152px; }
-    .card.poster { width: 185px; height: 278px; }
-    .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .card-shade {
-      position: absolute; inset: 0;
-      background: linear-gradient(0deg, rgba(8,9,12,0.95) 0%, rgba(8,9,12,0.15) 60%, transparent 100%);
-      display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
-    }
-    .card:hover, .card:focus {
-      transform: scale(1.08) translateY(-4px); border-color: white;
-      box-shadow: 0 16px 34px rgba(0,0,0,0.85), 0 0 18px rgba(229,9,20,0.4); z-index: 20;
-    }
-    .top-badges { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; }
-    .badge-live { background: var(--accent); color: white; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 5px; }
-    .badge-proto { background: rgba(0,0,0,0.75); color: #38bdf8; font-size: 0.65rem; font-weight: 700; padding: 3px 7px; border-radius: 5px; }
-    .card-title { font-size: 0.98rem; font-weight: 800; margin: 0 0 3px 0; }
-    .card-sub { font-size: 0.76rem; color: #cbd5e1; margin: 0; }
-
-    /* =========================================================
-       4. MOBILE / IPHONE ANPASSUNGEN
-       ========================================================= */
+    /* Mobile / iPhone */
     .bottom-nav { display: none; }
-
-    @media (max-width: 900px) {
-      .profiles-grid {
-        grid-template-columns: repeat(3, minmax(92px, 115px));
-        gap: 16px;
-      }
-      .profile-avatar { width: 92px; height: 92px; font-size: 2.2rem; }
-    }
-
     @media (max-width: 768px) {
       #profile-gate { justify-content: flex-start; padding-top: 40px; }
+      .profiles-grid { grid-template-columns: repeat(3, minmax(92px, 110px)); gap: 16px; }
+      .profile-avatar { width: 92px; height: 92px; font-size: 2.2rem; }
       .sidebar { display: none; }
-      .main-stage { margin-left: 0; padding-bottom: 90px; }
+      .main-stage { margin-left: 0; padding: 90px 20px 95px 20px; }
       .top-bar { top: 12px; right: 14px; left: 14px; justify-content: space-between; }
-      .hero { height: 54vh; padding: 0 20px 28px 20px; }
-      .media-row { padding-left: 18px; }
-      .card.wide { width: 225px; height: 126px; }
-      .card.poster { width: 140px; height: 210px; }
-
       .bottom-nav {
         position: fixed; bottom: 0; left: 0; right: 0;
         background: rgba(12, 15, 22, 0.94); backdrop-filter: blur(18px);
@@ -435,37 +336,80 @@
 </head>
 <body>
 
-  <!-- ==================== 1. PROFILWAND (15 BENUTZER IN 3 REIHEN) ==================== -->
+  <!-- ==================== 1. PROFILWAND ==================== -->
   <div id="profile-gate">
     <div class="gate-header">
       <div class="gate-logo">STREAMHUB</div>
       <h1 class="gate-title">Wer schaut gerade?</h1>
     </div>
-
-    <!-- Hier werden die 15 Profile (3 Reihen à 5 Profile) geladen -->
     <div class="profiles-grid" id="profiles-grid"></div>
   </div>
 
-  <!-- ==================== 2. CODE-EINGABE MODAL PRO BENUTZER ==================== -->
-  <div id="auth-modal">
-    <div class="auth-box">
-      <div class="auth-avatar-preview" id="auth-avatar">👨</div>
-      <h2 class="auth-user-title" id="auth-name">Roni</h2>
-      <div class="auth-hint" id="auth-hint">Bitte persönlichen Zugangscode eingeben</div>
+  <!-- ==================== 2. LOGIN-MODAL ==================== -->
+  <div id="auth-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="avatar-preview" id="auth-avatar"></div>
+      <h2 class="modal-title" id="auth-name">Name</h2>
+      <div class="modal-sub">Bitte persönlichen Zugangscode eingeben</div>
 
-      <input type="password" id="auth-input" class="auth-input" placeholder="VornameGeburtsdatum" autocomplete="off">
-      <div class="auth-error" id="auth-error"></div>
+      <input type="password" id="auth-input" class="input-field tv-focusable" placeholder="Passwort / Zugangscode" autocomplete="off">
+      <div class="error-msg" id="auth-error"></div>
 
-      <div class="auth-actions">
-        <button class="btn-cancel" tabindex="0" onclick="closeAuthModal()">Abbrechen</button>
-        <button class="btn-unlock" tabindex="0" onclick="verifyProfileCode()">Entsperren</button>
+      <div class="modal-actions">
+        <button class="btn btn-ghost tv-focusable" id="btn-auth-cancel" tabindex="0" onclick="closeAuthModal()">Abbrechen</button>
+        <button class="btn btn-accent tv-focusable" id="btn-auth-unlock" tabindex="0" onclick="verifyProfileCode()">Anmelden</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 3. HAUPT-APP (NACH LOGIN) ==================== -->
+  <!-- ==================== 3. PROFIL-EDITOR & AVATAR-WAHL ==================== -->
+  <div id="editor-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="avatar-preview" id="edit-avatar-preview">👨</div>
+      <h2 class="modal-title" id="editor-title">Profil anpassen</h2>
+      <div class="modal-sub" id="editor-sub">Wähle dein eigenes Profilbild & deine Farbe</div>
+
+      <!-- Nur beim Neuanlegen sichtbar -->
+      <div id="new-user-fields" style="display:none;">
+        <input type="text" id="new-user-name" class="input-field tv-focusable" placeholder="Name des Benutzers (z.B. Max)" autocomplete="off">
+        <input type="password" id="new-user-code" class="input-field tv-focusable" placeholder="Zugangscode für diesen Benutzer" autocomplete="off">
+
+        <div class="picker-label">Berechtigung</div>
+        <div class="role-selector">
+          <button type="button" class="role-btn tv-focusable selected" id="role-adult" onclick="selectRole('adult')">Erwachsene (Voll)</button>
+          <button type="button" class="role-btn tv-focusable" id="role-kids" onclick="selectRole('kids')">Kids-Profil</button>
+        </div>
+      </div>
+
+      <div class="picker-label">Profilbild (Icon wählen)</div>
+      <div class="icon-grid" id="icon-grid"></div>
+
+      <div class="picker-label">Oder eigenes Foto vom Gerät</div>
+      <label class="upload-label tv-focusable" tabindex="0">
+        📷 Eigenes Bild auswählen...
+        <input type="file" id="custom-img-input" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+      </label>
+
+      <div class="picker-label">Hintergrundfarbe</div>
+      <div class="color-grid" id="color-grid"></div>
+
+      <!-- Admin-Freigabe beim Erstellen/Löschen -->
+      <div id="admin-confirm-box" style="display:none; margin-top:10px;">
+        <input type="password" id="admin-pass-input" class="input-field tv-focusable" placeholder="Admin-Passwort (Roni) zur Bestätigung" autocomplete="off">
+      </div>
+
+      <div class="error-msg" id="editor-error"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost tv-focusable" tabindex="0" onclick="closeEditorModal()">Abbrechen</button>
+        <button class="btn btn-danger tv-focusable" id="btn-delete-user" style="display:none;" tabindex="0" onclick="deleteCurrentProfile()">Löschen</button>
+        <button class="btn btn-accent tv-focusable" tabindex="0" onclick="saveProfileChanges()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 4. HAUPT-APP (BEREINIGT) ==================== -->
   <div id="app">
-    <!-- Linke TV-Seitenleiste -->
     <aside class="sidebar">
       <div class="side-brand">
         <div class="side-brand-icon">S</div>
@@ -473,354 +417,468 @@
       </div>
 
       <nav class="side-nav">
-        <button class="nav-item active" tabindex="0" onclick="filterCategory('all', this)">
+        <button class="nav-item tv-focusable active" tabindex="0" onclick="setSection('home', this)">
           <span class="icon">🏠</span><span class="label">Startseite</span>
         </button>
-        <button class="nav-item" tabindex="0" onclick="filterCategory('live', this)">
+        <button class="nav-item tv-focusable" tabindex="0" onclick="setSection('live', this)">
           <span class="icon">📡</span><span class="label">Live-TV (M3U)</span>
         </button>
-        <button class="nav-item" tabindex="0" onclick="filterCategory('mhub', this)">
+        <button class="nav-item tv-focusable" tabindex="0" onclick="setSection('mhub', this)">
           <span class="icon">🎬</span><span class="label">mHub Kataloge</span>
         </button>
-        <button class="nav-item" tabindex="0" onclick="filterCategory('kids', this)">
-          <span class="icon">🧸</span><span class="label">Kinderwelt</span>
+        <button class="nav-item tv-focusable" tabindex="0" onclick="openAvatarEditorForActiveUser()">
+          <span class="icon">🖼️</span><span class="label">Profilbild ändern</span>
         </button>
-      </nav>
-
-      <div class="side-nav">
-        <button class="nav-item" tabindex="0" onclick="switchProfile()">
+        <button class="nav-item tv-focusable" tabindex="0" onclick="switchProfile()">
           <span class="icon">👥</span><span class="label">Profil wechseln</span>
         </button>
-      </div>
+      </nav>
+      <div></div>
     </aside>
 
-    <!-- Obere Status-Leiste -->
     <div class="top-bar">
       <div class="vpn-indicator">
         <span class="pulse-dot"></span>
         <span>CyberGhost VPN</span>
       </div>
       <div class="divider"></div>
-      <button class="user-switch-btn" tabindex="0" onclick="switchProfile()" title="Profil wechseln">
-        <div class="mini-avatar" id="active-avatar">👨</div>
+      <button class="user-switch-btn tv-focusable" tabindex="0" onclick="openAvatarEditorForActiveUser()" title="Profilbild anpassen">
+        <div class="mini-avatar" id="active-avatar"></div>
         <span id="active-username">Roni</span>
       </button>
     </div>
 
-    <!-- Hauptbühne -->
     <main class="main-stage">
-      <section class="hero">
-        <div class="hero-backdrop" id="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop');"></div>
-        <div class="hero-vignette"></div>
-
-        <div class="hero-content">
-          <div class="mhub-tag" id="hero-tag">⚡ BEREIT FÜR GITHUB DEPLOYMENT</div>
-          <h1 class="hero-title" id="hero-title">ORF 1 HD – Live</h1>
-          <p class="hero-desc" id="hero-desc">
-            Grundgerüst aktiv! Die Oberfläche ist bereit für dein Git-Repository. Im nächsten Schritt verknüpfen wir die Kacheln mit deinen echten M3U-Listen und mHub-Quellen.
-          </p>
-          <div class="hero-actions">
-            <button class="btn-primary" tabindex="0" onclick="placeholderAction('Stream-Start')">
-              ▶ Abspielen (Platzhalter)
-            </button>
-            <button class="btn-secondary" tabindex="0" onclick="placeholderAction('mHub Quellen-Auswahl')">
-              ☰ Stream-Server (mHub)
-            </button>
-          </div>
+      <div class="empty-state-box" data-row-index="0">
+        <div class="status-tag">✓ PRODUKTIONS-OBERFLÄCHE BEREIT</div>
+        <h1 class="empty-title" id="welcome-title">Willkommen, Roni</h1>
+        <p class="empty-desc">
+          Alle Test-Links und Demo-Vorschauen wurden entfernt. Du kannst über den Button unten jederzeit dein eigenes Profilbild ändern oder auf der Startseite bis zu 15 Familien-Profile anlegen. Im nächsten Schritt hängen wir hier deine echten, verschlüsselten M3U- und mHub-Quellen ein.
+        </p>
+        <div class="action-row">
+          <button class="btn btn-accent tv-focusable" style="flex:0 0 auto; padding:14px 26px;" tabindex="0" onclick="openAvatarEditorForActiveUser()">
+            🖼️ Eigenes Profilbild wählen
+          </button>
+          <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:14px 26px;" tabindex="0" onclick="switchProfile()">
+            👥 Zur Profilwand (Benutzer verwalten)
+          </button>
         </div>
-      </section>
-
-      <!-- Katalog-Reihen -->
-      <div class="rows-wrapper" id="catalog-rows"></div>
+      </div>
     </main>
 
-    <!-- Untere Leiste für iPhone / Mobile -->
     <nav class="bottom-nav">
-      <button class="b-nav-btn active" onclick="filterCategory('all', this)"><span class="ico">🏠</span>Start</button>
-      <button class="b-nav-btn" onclick="filterCategory('live', this)"><span class="ico">📡</span>Live-TV</button>
-      <button class="b-nav-btn" onclick="filterCategory('mhub', this)"><span class="ico">🎬</span>mHub</button>
+      <button class="b-nav-btn active" onclick="setSection('home', this)"><span class="ico">🏠</span>Start</button>
+      <button class="b-nav-btn" onclick="openAvatarEditorForActiveUser()"><span class="ico">🖼️</span>Profilbild</button>
       <button class="b-nav-btn" onclick="switchProfile()"><span class="ico">👥</span>Profile</button>
     </nav>
   </div>
 
   <script>
-    // =========================================================================
-    // 1. DIE 15 BENUTZERPROFILE (3 Reihen à 5 Profile)
-    // Hier trägst du später Namen, Icons und die echten VornameGeburtsdatum-Codes ein
-    // =========================================================================
-    const profiles = [
-      // REIHE 1: Kernfamilie (Platz 1–5)
-      { id: 1,  name: "Roni",      icon: "👨", bg: "linear-gradient(135deg, #e50914, #7f1d1d)", role: "admin", code: "roni15041980" },
-      { id: 2,  name: "Partnerin", icon: "👩", bg: "linear-gradient(135deg, #2563eb, #1e3a8a)", role: "adult", code: "frau01011982" },
-      { id: 3,  name: "Kind 1",    icon: "🧒", bg: "linear-gradient(135deg, #10b981, #065f46)", role: "kids",  code: "kind1" },
-      { id: 4,  name: "Kind 2",    icon: "👧", bg: "linear-gradient(135deg, #f59e0b, #78350f)", role: "kids",  code: "kind2" },
-      { id: 5,  name: "Kind 3",    icon: "🧑", bg: "linear-gradient(135deg, #8b5cf6, #4c1d95)", role: "kids",  code: "kind3" },
+    const STORAGE_KEY_PROFILES = 'streamhub_profiles_v1';
+    const STORAGE_KEY_ACTIVE   = 'streamhub_active_id_v1';
+    const MAX_PROFILES         = 15;
+    const ADMIN_MASTER_CODE    = '@Roni11051981@';
 
-      // REIHE 2: Erweiterte Familie / Großeltern / Nichten & Neffen (Platz 6–10)
-      { id: 6,  name: "Oma",       icon: "👵", bg: "linear-gradient(135deg, #ec4899, #831843)", role: "adult", code: "oma" },
-      { id: 7,  name: "Opa",       icon: "👴", bg: "linear-gradient(135deg, #14b8a6, #134e4a)", role: "adult", code: "opa" },
-      { id: 8,  name: "Nichte 1",  icon: "👱‍♀️", bg: "linear-gradient(135deg, #06b6d4, #164e63)", role: "kids",  code: "nichte1" },
-      { id: 9,  name: "Neffe 1",   icon: "👦", bg: "linear-gradient(135deg, #f97316, #7c2d12)", role: "kids",  code: "neffe1" },
-      { id: 10, name: "Familie 10",icon: "🧔", bg: "linear-gradient(135deg, #6366f1, #312e81)", role: "adult", code: "user10" },
-
-      // REIHE 3: Weitere Familienmitglieder / Geräte (Platz 11–15)
-      { id: 11, name: "Familie 11",icon: "👩‍🦰", bg: "linear-gradient(135deg, #ef4444, #450a0a)", role: "adult", code: "user11" },
-      { id: 12, name: "Familie 12",icon: "👨‍🦱", bg: "linear-gradient(135deg, #3b82f6, #172554)", role: "adult", code: "user12" },
-      { id: 13, name: "Familie 13",icon: "👩‍🦳", bg: "linear-gradient(135deg, #a855f7, #3b0764)", role: "adult", code: "user13" },
-      { id: 14, name: "Gäste",     icon: "🍿", bg: "linear-gradient(135deg, #64748b, #1e293b)", role: "kids",  code: "gast" },
-      { id: 15, name: "Wohnzimmer",icon: "📺", bg: "linear-gradient(135deg, #22c55e, #14532d)", role: "adult", code: "tv" }
+    const AVATAR_ICONS = [
+      "👨", "👩", "🧒", "👧", "🧑",
+      "🧔", "👱‍♀️", "👵", "👴", "🦊",
+      "🦁", "🐼", "🐯", "🦅", "🚀",
+      "🎮", "⚽", "🎸", "🍿", "👑"
     ];
 
-    // =========================================================================
-    // 2. PLATZHALTER-KATALOG (Nur fürs Layout, Buttons führen noch ins Leere)
-    // =========================================================================
-    const catalogData = [
+    const AVATAR_COLORS = [
+      "linear-gradient(135deg, #e50914, #7f1d1d)",
+      "linear-gradient(135deg, #2563eb, #1e3a8a)",
+      "linear-gradient(135deg, #10b981, #065f46)",
+      "linear-gradient(135deg, #f59e0b, #78350f)",
+      "linear-gradient(135deg, #8b5cf6, #4c1d95)",
+      "linear-gradient(135deg, #ec4899, #831843)",
+      "linear-gradient(135deg, #06b6d4, #164e63)",
+      "linear-gradient(135deg, #64748b, #1e293b)"
+    ];
+
+    // Standardmäßig startet das Projekt nur mit deinem Admin-Profil Roni
+    const defaultProfiles = [
       {
-        rowId: "live",
-        rowTitle: "📡 Live-TV & M3U Sender",
-        cardStyle: "wide",
-        kidsAllowed: true,
-        items: [
-          { title: "ORF 1 HD", sub: "Hauptabend • Live", badge: "LIVE", proto: "M3U8", backdrop: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für ORF 1 HD Live-Stream." },
-          { title: "ServusTV HD", sub: "Sport & Doku • Live", badge: "LIVE", proto: "M3U8", backdrop: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für ServusTV HD." },
-          { title: "SRF 1 / SRF zwei", sub: "Schweiz • Live", badge: "LIVE", proto: "M3U8", backdrop: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für SRF Live-Stream." },
-          { title: "ARD & ZDF HD", sub: "Deutschland • Live", badge: "LIVE", proto: "M3U8", backdrop: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für ARD/ZDF." }
-        ]
-      },
-      {
-        rowId: "mhub",
-        rowTitle: "🎬 mHub Kataloge (Filme & Serien)",
-        cardStyle: "poster",
-        kidsAllowed: false,
-        items: [
-          { title: "Orbital Horizon", sub: "Sci-Fi • mHub Quelle", badge: "4K", proto: "mHub v2", backdrop: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für übersetzte mHub-Filmquelle." },
-          { title: "Shadow Protocol", sub: "Serie • Staffel 1–3", badge: "SERIE", proto: "mHub v2", backdrop: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für übersetzte mHub-Serienquelle." },
-          { title: "Mythos Alpen", sub: "Dokumentation", badge: "HD", proto: "mHub", backdrop: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für Mediathek-Inhalte." },
-          { title: "Tokyo Midnight", sub: "Action • 2026", badge: "4K", proto: "mHub v2", backdrop: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=600&auto=format&fit=crop", desc: "Platzhalter für mHub-Katalog." }
-        ]
-      },
-      {
-        rowId: "kids",
-        rowTitle: "🧸 Kinderwelt",
-        cardStyle: "wide",
-        kidsAllowed: true,
-        items: [
-          { title: "KiKA HD Live", sub: "Kinderprogramm", badge: "KIDS", proto: "M3U8", backdrop: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop", desc: "Freigegeben für Kinder-Profile." },
-          { title: "Weltraum Abenteuer", sub: "Animationsfilm", badge: "KIDS", proto: "mHub", backdrop: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1600&auto=format&fit=crop", thumb: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=600&auto=format&fit=crop", desc: "Freigegeben für Kinder-Profile." }
-        ]
+        id: "admin-roni",
+        name: "Roni",
+        icon: "👨",
+        customImage: null,
+        bg: AVATAR_COLORS[0],
+        role: "admin",
+        code: ADMIN_MASTER_CODE
       }
     ];
 
+    let profiles = [];
     let selectedProfile = null;
     let activeProfile = null;
-    let currentFilter = "all";
 
-    // Baut die 15 Profile auf der Startwand auf
+    // Editor-Status
+    let editorMode = "avatar"; // "create" oder "avatar"
+    let tempIcon = AVATAR_ICONS[0];
+    let tempColor = AVATAR_COLORS[0];
+    let tempCustomImage = null;
+    let tempRole = "adult";
+
+    function loadProfiles() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PROFILES);
+        if (raw) {
+          profiles = JSON.parse(raw);
+          // Sicherstellen, dass Admin Roni immer mit aktuellem Master-Passwort existiert
+          const admin = profiles.find(p => p.id === "admin-roni" || p.role === "admin");
+          if (admin) admin.code = ADMIN_MASTER_CODE;
+          else profiles.unshift(defaultProfiles[0]);
+        } else {
+          profiles = [...defaultProfiles];
+          saveProfiles();
+        }
+      } catch (e) {
+        profiles = [...defaultProfiles];
+      }
+    }
+
+    function saveProfiles() {
+      localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(profiles));
+    }
+
+    function applyAvatarStyle(el, profileOrTemp) {
+      if (profileOrTemp.customImage) {
+        el.style.backgroundImage = `url('${profileOrTemp.customImage}')`;
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+        el.innerHTML = '';
+      } else {
+        el.style.background = profileOrTemp.bg;
+        el.style.backgroundImage = profileOrTemp.bg;
+        el.innerHTML = `<span>${profileOrTemp.icon}</span>`;
+      }
+    }
+
+    // Baut die Profilwand auf (inkl. "+ Neues Profil" bis max. 15)
     function renderProfileGate() {
       const grid = document.getElementById('profiles-grid');
       grid.innerHTML = "";
 
       profiles.forEach((p, idx) => {
         const btn = document.createElement('button');
-        btn.className = 'profile-card';
+        btn.className = 'profile-card tv-focusable';
         btn.tabIndex = 0;
-        btn.dataset.index = idx;
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'profile-avatar';
+        applyAvatarStyle(avatarDiv, p);
 
         const roleLabel = p.role === "admin" ? "ADMIN" : (p.role === "kids" ? "KIDS" : "");
+        if (roleLabel) {
+          const tag = document.createElement('span');
+          tag.className = 'role-tag';
+          tag.innerText = roleLabel;
+          avatarDiv.appendChild(tag);
+        }
 
-        btn.innerHTML = `
-          <div class="profile-avatar" style="background: ${p.bg}">
-            <span>${p.icon}</span>
-            ${roleLabel ? `<span class="role-tag">${roleLabel}</span>` : ''}
-          </div>
-          <span class="profile-name">${p.name}</span>
-        `;
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'profile-name';
+        nameSpan.innerText = p.name;
 
+        btn.appendChild(avatarDiv);
+        btn.appendChild(nameSpan);
         btn.onclick = () => openAuthModal(p);
         grid.appendChild(btn);
       });
+
+      // Bis zu 15 Benutzer können angelegt werden
+      if (profiles.length < MAX_PROFILES) {
+        const addBtn = document.createElement('button');
+        addBtn.className = 'profile-card tv-focusable';
+        addBtn.tabIndex = 0;
+        addBtn.innerHTML = `
+          <div class="profile-avatar add-new"><span>＋</span></div>
+          <span class="profile-name">Neues Profil (${profiles.length}/${MAX_PROFILES})</span>
+        `;
+        addBtn.onclick = () => openCreateProfileModal();
+        grid.appendChild(addBtn);
+      }
     }
 
-    // Öffnet das Code-Eingabefenster für das angeklickte Profil
+    // ==================== LOGIN LOGIK ====================
     function openAuthModal(profile) {
       selectedProfile = profile;
       const modal = document.getElementById('auth-modal');
-      const avatar = document.getElementById('auth-avatar');
-      const input = document.getElementById('auth-input');
-      const err = document.getElementById('auth-error');
-
-      avatar.style.background = profile.bg;
-      avatar.innerText = profile.icon;
+      applyAvatarStyle(document.getElementById('auth-avatar'), profile);
       document.getElementById('auth-name').innerText = profile.name;
-      // Zum schnellen Testen am TV/Handy zeigen wir den aktuellen Test-Code dezent als Hinweis an:
-      document.getElementById('auth-hint').innerText = `Code: VornameGeburtsdatum (Test: ${profile.code})`;
-
-      err.innerText = "";
+      document.getElementById('auth-error').innerText = "";
+      const input = document.getElementById('auth-input');
       input.value = "";
       modal.style.display = 'flex';
-      setTimeout(() => input.focus(), 60);
+      setTimeout(() => input.focus(), 80);
     }
 
     function closeAuthModal() {
       document.getElementById('auth-modal').style.display = 'none';
-      const idx = selectedProfile ? profiles.indexOf(selectedProfile) : 0;
-      document.querySelectorAll('.profile-card')[idx]?.focus();
+      document.querySelector('.profile-card')?.focus();
     }
 
-    // Prüft den eingegebenen Code für das gewählte Profil
     function verifyProfileCode() {
       if (!selectedProfile) return;
-      const inputVal = document.getElementById('auth-input').value.trim().toLowerCase();
+      const entered = document.getElementById('auth-input').value.trim();
 
-      if (inputVal === selectedProfile.code.toLowerCase()) {
-        localStorage.setItem('streamhub_active_profile_id', selectedProfile.id);
+      // Bei Roni exakte Passwortprüfung (@Roni11051981@), bei weiteren Profilen Code-Prüfung
+      const valid = selectedProfile.role === "admin"
+        ? entered === selectedProfile.code
+        : entered.toLowerCase() === selectedProfile.code.toLowerCase();
+
+      if (valid) {
+        localStorage.setItem(STORAGE_KEY_ACTIVE, selectedProfile.id);
         enterAppWithProfile(selectedProfile);
       } else {
-        document.getElementById('auth-error').innerText = "Falscher Zugangscode für " + selectedProfile.name + "!";
-        document.getElementById('auth-input').select();
+        document.getElementById('auth-error').innerText = "Zugangscode nicht korrekt.";
+        document.getElementById('auth-input').focus();
       }
     }
 
     document.getElementById('auth-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') verifyProfileCode();
+      if (e.key === 'Enter') { e.preventDefault(); verifyProfileCode(); }
     });
 
-    // Schaltet nach erfolgreichem Code in die Haupt-App
     function enterAppWithProfile(profile) {
       activeProfile = profile;
       document.getElementById('auth-modal').style.display = 'none';
       document.getElementById('profile-gate').style.display = 'none';
       document.getElementById('app').style.display = 'block';
 
-      const miniAvatar = document.getElementById('active-avatar');
-      miniAvatar.style.background = profile.bg;
-      miniAvatar.innerText = profile.icon;
+      applyAvatarStyle(document.getElementById('active-avatar'), profile);
       document.getElementById('active-username').innerText = profile.name;
+      document.getElementById('welcome-title').innerText = `Willkommen, ${profile.name}`;
 
-      renderCatalog();
-      setTimeout(() => document.querySelector('.card')?.focus(), 100);
+      setTimeout(() => document.querySelector('#app .tv-focusable')?.focus(), 100);
     }
 
-    // Zurück zur 15er-Profilwand
     function switchProfile() {
-      localStorage.removeItem('streamhub_active_profile_id');
+      localStorage.removeItem(STORAGE_KEY_ACTIVE);
       activeProfile = null;
       document.getElementById('app').style.display = 'none';
       document.getElementById('profile-gate').style.display = 'flex';
+      renderProfileGate();
       setTimeout(() => document.querySelector('.profile-card')?.focus(), 80);
     }
 
-    // Baut die Katalog-Reihen (filtert Kinder-Profile automatisch)
-    function renderCatalog() {
-      const container = document.getElementById('catalog-rows');
-      container.innerHTML = "";
+    // ==================== PROFIL-EDITOR & EIGENES PROFILBILD ====================
+    function buildPickerGrids() {
+      const iGrid = document.getElementById('icon-grid');
+      iGrid.innerHTML = "";
+      AVATAR_ICONS.forEach(ic => {
+        const b = document.createElement('button');
+        b.type = "button";
+        b.className = 'icon-choice tv-focusable' + (ic === tempIcon && !tempCustomImage ? ' selected' : '');
+        b.innerText = ic;
+        b.onclick = () => {
+          tempIcon = ic;
+          tempCustomImage = null;
+          updateEditorPreview();
+          buildPickerGrids();
+        };
+        iGrid.appendChild(b);
+      });
 
-      catalogData.forEach(row => {
-        if (activeProfile && activeProfile.role === "kids" && !row.kidsAllowed) return;
-        if (currentFilter !== "all" && row.rowId !== currentFilter) return;
-
-        const sec = document.createElement('section');
-        sec.className = 'media-row';
-        sec.innerHTML = `
-          <div class="row-title">${row.rowTitle}</div>
-          <div class="row-track"></div>
-        `;
-        const track = sec.querySelector('.row-track');
-
-        row.items.forEach(item => {
-          const card = document.createElement('div');
-          card.className = `card ${row.cardStyle}`;
-          card.tabIndex = 0;
-          card.innerHTML = `
-            <img src="${item.thumb}" alt="${item.title}" loading="lazy">
-            <div class="top-badges">
-              <span class="badge-live">${item.badge}</span>
-              <span class="badge-proto">${item.proto}</span>
-            </div>
-            <div class="card-shade">
-              <h3 class="card-title">${item.title}</h3>
-              <p class="card-sub">${item.sub}</p>
-            </div>
-          `;
-
-          card.addEventListener('focus', () => updateHero(item));
-          card.addEventListener('mouseenter', () => updateHero(item));
-          card.addEventListener('click', () => placeholderAction(item.title));
-          card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') placeholderAction(item.title);
-          });
-
-          track.appendChild(card);
-        });
-
-        container.appendChild(sec);
+      const cGrid = document.getElementById('color-grid');
+      cGrid.innerHTML = "";
+      AVATAR_COLORS.forEach(col => {
+        const b = document.createElement('button');
+        b.type = "button";
+        b.className = 'color-choice tv-focusable' + (col === tempColor ? ' selected' : '');
+        b.style.background = col;
+        b.onclick = () => {
+          tempColor = col;
+          updateEditorPreview();
+          buildPickerGrids();
+        };
+        cGrid.appendChild(b);
       });
     }
 
-    function updateHero(item) {
-      document.getElementById('hero-bg').style.backgroundImage = `url('${item.backdrop}')`;
-      document.getElementById('hero-tag').innerText = `⚡ ${item.proto} • ${item.badge}`;
-      document.getElementById('hero-title').innerText = item.title;
-      document.getElementById('hero-desc').innerText = item.desc;
+    function updateEditorPreview() {
+      applyAvatarStyle(document.getElementById('edit-avatar-preview'), {
+        icon: tempIcon,
+        bg: tempColor,
+        customImage: tempCustomImage
+      });
     }
 
-    function filterCategory(cat, btn) {
-      currentFilter = cat;
-      document.querySelectorAll('.nav-item, .b-nav-btn').forEach(el => el.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderCatalog();
+    function selectRole(r) {
+      tempRole = r;
+      document.getElementById('role-adult').classList.toggle('selected', r === 'adult');
+      document.getElementById('role-kids').classList.toggle('selected', r === 'kids');
     }
 
-    function placeholderAction(title) {
-      alert(`[Platzhalter-Modus]\n"${title}" wurde ausgewählt.\nIm nächsten Schritt hängen wir hier die echten Streams & mHub-Quellen an.`);
+    // Eigenes Foto vom Gerät laden & kompakt auf 200x200 skalieren
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 200;
+          canvas.height = 200;
+          const ctx = canvas.getContext('2d');
+          const minSide = Math.min(img.width, img.height);
+          const sx = (img.width - minSide) / 2;
+          const sy = (img.height - minSide) / 2;
+          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 200, 200);
+          tempCustomImage = canvas.toDataURL('image/jpeg', 0.82);
+          updateEditorPreview();
+          buildPickerGrids();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
-    // =========================================================================
-    // 3. TV-FERNBEDIENUNGS-NAVIGATION (Pfeiltasten im 3x5 Profil-Raster)
-    // =========================================================================
-    window.addEventListener('keydown', (e) => {
-      // Schließen mit Zurück / Escape
-      if (e.key === 'Escape') {
-        if (document.getElementById('auth-modal').style.display === 'flex') {
-          e.preventDefault();
-          closeAuthModal();
-          return;
-        }
+    // Modus A: Eingeloggter Benutzer ändert sein eigenes Profilbild
+    function openAvatarEditorForActiveUser() {
+      if (!activeProfile) return;
+      editorMode = "avatar";
+      tempIcon = activeProfile.icon;
+      tempColor = activeProfile.bg;
+      tempCustomImage = activeProfile.customImage || null;
+
+      document.getElementById('editor-title').innerText = `Profilbild für ${activeProfile.name}`;
+      document.getElementById('editor-sub').innerText = "Wähle ein Icon, eine Farbe oder lade ein eigenes Foto hoch";
+      document.getElementById('new-user-fields').style.display = 'none';
+      document.getElementById('admin-confirm-box').style.display = 'none';
+      document.getElementById('btn-delete-user').style.display = activeProfile.role !== 'admin' ? 'block' : 'none';
+      document.getElementById('editor-error').innerText = "";
+
+      updateEditorPreview();
+      buildPickerGrids();
+      document.getElementById('editor-modal').style.display = 'flex';
+    }
+
+    // Modus B: Neuen Benutzer auf der Profilwand anlegen (bis max. 15)
+    function openCreateProfileModal() {
+      if (profiles.length >= MAX_PROFILES) return;
+      editorMode = "create";
+      tempIcon = AVATAR_ICONS[profiles.length % AVATAR_ICONS.length];
+      tempColor = AVATAR_COLORS[profiles.length % AVATAR_COLORS.length];
+      tempCustomImage = null;
+      tempRole = "adult";
+
+      document.getElementById('editor-title').innerText = "Neuen Benutzer anlegen";
+      document.getElementById('editor-sub').innerText = `Profil ${profiles.length + 1} von maximal ${MAX_PROFILES}`;
+      document.getElementById('new-user-fields').style.display = 'block';
+      document.getElementById('new-user-name').value = "";
+      document.getElementById('new-user-code').value = "";
+      document.getElementById('admin-confirm-box').style.display = 'block';
+      document.getElementById('admin-pass-input').value = "";
+      document.getElementById('btn-delete-user').style.display = 'none';
+      document.getElementById('editor-error').innerText = "";
+      selectRole('adult');
+
+      updateEditorPreview();
+      buildPickerGrids();
+      document.getElementById('editor-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('new-user-name').focus(), 80);
+    }
+
+    function closeEditorModal() {
+      document.getElementById('editor-modal').style.display = 'none';
+    }
+
+    function saveProfileChanges() {
+      const errEl = document.getElementById('editor-error');
+      errEl.innerText = "";
+
+      if (editorMode === "avatar" && activeProfile) {
+        activeProfile.icon = tempIcon;
+        activeProfile.bg = tempColor;
+        activeProfile.customImage = tempCustomImage;
+        saveProfiles();
+        applyAvatarStyle(document.getElementById('active-avatar'), activeProfile);
+        closeEditorModal();
+        return;
       }
 
-      // 2D-Navigation auf der 15er-Profilwand (5 Spalten am TV/PC, 3 am Handy)
-      const gateVisible = document.getElementById('profile-gate').style.display !== 'none' &&
-                          document.getElementById('auth-modal').style.display !== 'flex';
-      if (gateVisible && ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
-        const cards = Array.from(document.querySelectorAll('.profile-card'));
-        const currentIdx = cards.indexOf(document.activeElement);
-        if (currentIdx === -1) {
-          cards[0]?.focus();
+      if (editorMode === "create") {
+        const name = document.getElementById('new-user-name').value.trim();
+        const code = document.getElementById('new-user-code').value.trim();
+        const adminPass = document.getElementById('admin-pass-input').value.trim();
+
+        if (!name || !code) {
+          errEl.innerText = "Bitte Name und Zugangscode ausfüllen.";
           return;
         }
+        if (adminPass !== ADMIN_MASTER_CODE) {
+          errEl.innerText = "Admin-Passwort (Roni) nicht korrekt!";
+          return;
+        }
+
+        profiles.push({
+          id: "user-" + Date.now(),
+          name: name,
+          icon: tempIcon,
+          customImage: tempCustomImage,
+          bg: tempColor,
+          role: tempRole,
+          code: code
+        });
+
+        saveProfiles();
+        renderProfileGate();
+        closeEditorModal();
+      }
+    }
+
+    function deleteCurrentProfile() {
+      if (!activeProfile || activeProfile.role === "admin") return;
+      if (confirm(`Profil "${activeProfile.name}" wirklich löschen?`)) {
+        profiles = profiles.filter(p => p.id !== activeProfile.id);
+        saveProfiles();
+        closeEditorModal();
+        switchProfile();
+      }
+    }
+
+    function setSection(sec, btn) {
+      document.querySelectorAll('.nav-item, .b-nav-btn').forEach(el => el.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    // ==================== TV-FERNBEDIENUNGS-NAVIGATION ====================
+    window.addEventListener('keydown', (e) => {
+      const authOpen   = document.getElementById('auth-modal').style.display === 'flex';
+      const editorOpen = document.getElementById('editor-modal').style.display === 'flex';
+      const gateOpen   = document.getElementById('profile-gate').style.display !== 'none' && !authOpen && !editorOpen;
+
+      if (e.key === 'Escape') {
+        if (authOpen)   { e.preventDefault(); closeAuthModal(); return; }
+        if (editorOpen) { e.preventDefault(); closeEditorModal(); return; }
+      }
+
+      if (gateOpen && ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
+        const cards = Array.from(document.querySelectorAll('#profiles-grid .profile-card'));
+        const idx = cards.indexOf(document.activeElement);
+        if (idx === -1) { e.preventDefault(); cards[0]?.focus(); return; }
         e.preventDefault();
-        const cols = window.innerWidth <= 900 ? 3 : 5;
-        let nextIdx = currentIdx;
-
-        if (e.key === 'ArrowRight') nextIdx = Math.min(cards.length - 1, currentIdx + 1);
-        if (e.key === 'ArrowLeft')  nextIdx = Math.max(0, currentIdx - 1);
-        if (e.key === 'ArrowDown')  nextIdx = Math.min(cards.length - 1, currentIdx + cols);
-        if (e.key === 'ArrowUp')    nextIdx = Math.max(0, currentIdx - cols);
-
-        cards[nextIdx]?.focus();
+        const cols = window.innerWidth <= 768 ? 3 : Math.min(5, cards.length);
+        let next = idx;
+        if (e.key === 'ArrowRight') next = Math.min(cards.length - 1, idx + 1);
+        if (e.key === 'ArrowLeft')  next = Math.max(0, idx - 1);
+        if (e.key === 'ArrowDown')  next = Math.min(cards.length - 1, idx + cols);
+        if (e.key === 'ArrowUp')    next = Math.max(0, idx - cols);
+        cards[next]?.focus();
       }
     });
 
-    // Beim Start initialisieren & prüfen, ob Gerät bereits eingeloggt war
     window.addEventListener('DOMContentLoaded', () => {
+      loadProfiles();
       renderProfileGate();
-      const savedId = localStorage.getItem('streamhub_active_profile_id');
+      const savedId = localStorage.getItem(STORAGE_KEY_ACTIVE);
       if (savedId) {
         const found = profiles.find(p => String(p.id) === String(savedId));
-        if (found) {
-          enterAppWithProfile(found);
-          return;
-        }
+        if (found) { enterAppWithProfile(found); return; }
       }
       setTimeout(() => document.querySelector('.profile-card')?.focus(), 100);
     });

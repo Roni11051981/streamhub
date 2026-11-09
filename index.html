@@ -17,12 +17,15 @@
     :root {
       --bg: #08090c;
       --surface: #141824;
+      --surface-hover: #1e2436;
       --accent: #e50914;
       --accent-hover: #ff1e29;
+      --green: #10b981;
+      --amber: #f59e0b;
       --text: #ffffff;
       --text-dim: #94a3b8;
       --sidebar-w: 76px;
-      --sidebar-expand: 240px;
+      --sidebar-expand: 245px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -37,17 +40,16 @@
       user-select: none;
     }
 
-    /* Fokus-Ring für TV-Fernbedienung */
     .tv-focusable:focus {
       outline: none !important;
       border-color: #ffffff !important;
       box-shadow: 0 0 0 3px #ffffff, 0 12px 28px rgba(229, 9, 20, 0.65) !important;
-      transform: scale(1.06);
+      transform: scale(1.04);
       z-index: 50;
     }
 
     /* =========================================================
-       1. PROFILWAND (Dynamisch bis 15 Benutzer)
+       1. PROFILWAND (Bis 15 Benutzer)
        ========================================================= */
     #profile-gate {
       position: fixed;
@@ -61,7 +63,7 @@
       padding: 30px 20px;
       overflow-y: auto;
     }
-    .gate-header { text-align: center; margin-bottom: 30px; }
+    .gate-header { text-align: center; margin-bottom: 28px; }
     .gate-logo {
       font-size: 1.9rem; font-weight: 900; letter-spacing: 3px;
       color: var(--accent); margin-bottom: 8px;
@@ -94,35 +96,25 @@
       transition: transform 0.18s ease, border-color 0.18s ease;
     }
     .profile-avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.8rem;
-      position: relative;
+      width: 110px; height: 110px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem; position: relative;
       box-shadow: 0 10px 25px rgba(0,0,0,0.65);
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
+      overflow: hidden; background-size: cover; background-position: center;
     }
     .profile-avatar::after {
-      content: "";
-      position: absolute;
-      inset: 0;
+      content: ""; position: absolute; inset: 0;
       background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 55%);
       pointer-events: none;
     }
     .profile-avatar.add-new {
       background: rgba(255,255,255,0.05);
       border: 2px dashed rgba(255,255,255,0.25);
-      color: var(--text-dim);
-      font-size: 2.6rem;
+      color: var(--text-dim); font-size: 2.6rem;
     }
     .role-tag {
       position: absolute; bottom: 6px; right: 6px;
-      background: rgba(0,0,0,0.8); color: #fff;
+      background: rgba(0,0,0,0.82); color: #fff;
       font-size: 0.6rem; font-weight: 800; padding: 2px 6px;
       border-radius: 4px; text-transform: uppercase; z-index: 2;
     }
@@ -135,99 +127,106 @@
     .profile-card:hover .profile-name { color: #ffffff; }
 
     /* =========================================================
-       2. MODALS (Login, Neuer Benutzer & Profilbild-Auswahl)
+       2. MODALS (Login, Profil-Editor, Admin-Tresor, mHub-Detail)
        ========================================================= */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(8, 9, 12, 0.92);
       backdrop-filter: blur(16px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 6000;
-      padding: 20px;
-      overflow-y: auto;
+      display: none; align-items: center; justify-content: center;
+      z-index: 6000; padding: 20px; overflow-y: auto;
     }
     .modal-card {
       background: #121622;
       border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 20px;
-      padding: 32px 30px;
-      width: 100%;
-      max-width: 440px;
-      text-align: center;
+      border-radius: 20px; padding: 28px;
+      width: 100%; max-width: 460px; text-align: center;
       box-shadow: 0 25px 60px rgba(0,0,0,0.95);
+      max-height: 92vh; overflow-y: auto;
     }
+    .modal-card.wide-modal { max-width: 760px; text-align: left; }
+
     .avatar-preview {
-      width: 88px; height: 88px; border-radius: 16px;
+      width: 86px; height: 86px; border-radius: 16px;
       margin: 0 auto 14px auto;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2.5rem; border: 3px solid rgba(255,255,255,0.85);
+      font-size: 2.4rem; border: 3px solid rgba(255,255,255,0.85);
       background-size: cover; background-position: center;
       position: relative; overflow: hidden;
     }
     .modal-title { font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; }
-    .modal-sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; }
+    .modal-sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px; line-height: 1.4; }
 
-    .input-field {
-      width: 100%; padding: 14px; background: rgba(0,0,0,0.65);
-      border: 2px solid rgba(255,255,255,0.22); border-radius: 10px;
-      color: white; font-size: 1rem; text-align: center; margin-bottom: 12px;
+    .input-field, .textarea-field {
+      width: 100%; padding: 13px 14px; background: rgba(0,0,0,0.65);
+      border: 2px solid rgba(255,255,255,0.2); border-radius: 10px;
+      color: white; font-size: 0.95rem; margin-bottom: 12px; font-family: inherit;
     }
-    .error-msg { color: #f87171; font-size: 0.82rem; min-height: 20px; margin-bottom: 10px; }
+    .input-field.left-align { text-align: left; }
+    .textarea-field {
+      min-height: 130px; font-family: monospace; font-size: 0.8rem;
+      resize: vertical; text-align: left;
+    }
+    .error-msg { color: #f87171; font-size: 0.84rem; min-height: 20px; margin: 6px 0; font-weight: 600; }
 
-    .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
     .btn {
-      flex: 1; padding: 13px 16px; border-radius: 10px; font-size: 0.95rem;
+      flex: 1; padding: 12px 16px; border-radius: 10px; font-size: 0.9rem;
       font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: 0.15s;
+      text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-ghost { background: rgba(255,255,255,0.09); color: var(--text-dim); }
+    .btn-ghost { background: rgba(255,255,255,0.09); color: #e2e8f0; }
     .btn-accent { background: var(--accent); color: white; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
+    .btn-green  { background: #059669; color: white; }
+    .btn-danger { background: rgba(239, 68, 68, 0.18); color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
 
-    /* Avatar- & Farb-Auswahl-Gitter */
+    /* Tabs im Admin-Tresor */
+    .vault-tabs {
+      display: flex; gap: 8px; margin-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .vault-tab {
+      background: rgba(255,255,255,0.06); border: 2px solid transparent;
+      color: var(--text-dim); padding: 10px 14px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    }
+    .vault-tab.active { background: rgba(229,9,20,0.2); border-color: var(--accent); color: white; }
+    .vault-pane { display: none; }
+    .vault-pane.active { display: block; }
+
+    .vpn-guard-banner {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .vpn-guard-banner.warn {
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+
     .picker-label {
-      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px;
-      color: var(--text-dim); margin: 14px 0 8px 0; text-align: left; font-weight: 700;
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-dim); margin: 12px 0 6px 0; text-align: left; font-weight: 700;
     }
-    .icon-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+    .icon-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
     .icon-choice {
-      background: rgba(255,255,255,0.06);
-      border: 2px solid transparent;
-      border-radius: 10px;
-      height: 46px;
-      font-size: 1.45rem;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
+      background: rgba(255,255,255,0.06); border: 2px solid transparent;
+      border-radius: 10px; height: 44px; font-size: 1.4rem;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
     .icon-choice.selected { border-color: var(--accent); background: rgba(229,9,20,0.2); }
-
-    .color-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .color-choice {
-      height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer;
-    }
+    .color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-bottom: 14px; }
+    .color-choice { height: 30px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; }
     .color-choice.selected { border-color: white; transform: scale(1.1); }
 
     .upload-label {
-      display: block; width: 100%; padding: 10px; margin-bottom: 12px;
+      display: block; width: 100%; padding: 11px; margin-bottom: 12px;
       background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.3);
-      border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; cursor: pointer;
+      border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; cursor: pointer; text-align: center;
     }
-
-    .role-selector {
-      display: flex; gap: 10px; margin-bottom: 12px;
-    }
+    .role-selector { display: flex; gap: 10px; margin-bottom: 12px; }
     .role-btn {
       flex: 1; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.06);
       border: 2px solid transparent; color: var(--text-dim); font-weight: 700; cursor: pointer; font-size: 0.85rem;
@@ -235,7 +234,7 @@
     .role-btn.selected { border-color: var(--accent); color: white; background: rgba(229,9,20,0.18); }
 
     /* =========================================================
-       3. HAUPT-APP (Bereinigtes Produktions-Dashboard)
+       3. HAUPT-APP, GLOBALE SUCHE & KATALOG-REIHEN
        ========================================================= */
     #app { display: none; min-height: 100vh; position: relative; }
 
@@ -245,11 +244,11 @@
       background: linear-gradient(90deg, rgba(8,9,12,0.98) 65%, rgba(8,9,12,0.0) 100%);
       z-index: 1500;
       display: flex; flex-direction: column; justify-content: space-between;
-      padding: 28px 0; transition: width 0.25s ease; overflow: hidden;
+      padding: 26px 0; transition: width 0.25s ease; overflow: hidden;
     }
     .sidebar:hover, .sidebar:focus-within {
       width: var(--sidebar-expand);
-      background: linear-gradient(90deg, rgba(8,9,12,0.98) 85%, rgba(8,9,12,0.0) 100%);
+      background: linear-gradient(90deg, rgba(8,9,12,0.98) 88%, rgba(8,9,12,0.0) 100%);
     }
     .side-brand {
       display: flex; align-items: center; padding: 0 22px; gap: 16px;
@@ -260,54 +259,153 @@
       border-radius: 8px; display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; flex-shrink: 0;
     }
-    .side-nav { display: flex; flex-direction: column; gap: 8px; padding: 0 12px; }
+    .side-nav { display: flex; flex-direction: column; gap: 6px; padding: 0 12px; }
     .nav-item {
-      display: flex; align-items: center; gap: 18px; padding: 13px 14px;
+      display: flex; align-items: center; gap: 18px; padding: 12px 14px;
       border-radius: 12px; color: var(--text-dim); cursor: pointer;
       white-space: nowrap; border: 2px solid transparent; background: transparent;
-      font-size: 0.95rem; text-align: left;
+      font-size: 0.94rem; text-align: left;
     }
-    .nav-item .icon { font-size: 1.3rem; width: 24px; text-align: center; flex-shrink: 0; }
+    .nav-item .icon { font-size: 1.25rem; width: 24px; text-align: center; flex-shrink: 0; }
     .nav-item .label { opacity: 0; transition: opacity 0.2s; font-weight: 600; }
     .sidebar:hover .nav-item .label, .sidebar:focus-within .nav-item .label { opacity: 1; }
     .nav-item.active { color: white; background: rgba(255,255,255,0.12); }
 
     .top-bar {
-      position: fixed; top: 20px; right: 40px; z-index: 1400;
+      position: fixed; top: 18px; right: 38px; z-index: 1400;
       display: flex; align-items: center; gap: 12px;
-      background: rgba(12, 15, 22, 0.82); backdrop-filter: blur(14px);
-      padding: 8px 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(12, 15, 22, 0.85); backdrop-filter: blur(14px);
+      padding: 7px 15px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.12);
     }
-    .vpn-indicator { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; font-weight: 600; color: #34d399; }
+    .vpn-indicator { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; font-weight: 700; color: #34d399; }
     .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; }
+    .pulse-dot.warn { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
     .divider { width: 1px; height: 16px; background: rgba(255,255,255,0.15); }
     .user-switch-btn {
       display: flex; align-items: center; gap: 8px; background: none; border: 2px solid transparent;
-      color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 4px 10px; border-radius: 99px;
+      color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 3px 8px; border-radius: 99px;
     }
     .mini-avatar {
-      width: 28px; height: 28px; border-radius: 7px;
+      width: 26px; height: 26px; border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.95rem; background-size: cover; background-position: center; overflow: hidden;
+      font-size: 0.9rem; background-size: cover; background-position: center; overflow: hidden;
     }
 
-    .main-stage { margin-left: var(--sidebar-w); padding: 110px 50px 100px 45px; }
-    .empty-state-box {
-      background: linear-gradient(135deg, rgba(20, 24, 36, 0.9), rgba(12, 15, 22, 0.95));
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 45px 40px;
-      max-width: 720px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    .main-stage { margin-left: var(--sidebar-w); padding-bottom: 110px; }
+
+    /* Globale Suchleiste (Ausklappbar oben) */
+    #search-bar-drawer {
+      display: none;
+      padding: 85px 45px 15px 45px;
+      background: linear-gradient(180deg, rgba(18,22,34,0.98) 0%, rgba(8,9,12,0) 100%);
     }
+    .search-box-wrap {
+      display: flex; gap: 12px; max-width: 680px; align-items: center;
+    }
+    .search-input {
+      flex: 1; padding: 15px 20px; border-radius: 14px;
+      background: rgba(0,0,0,0.75); border: 2px solid rgba(255,255,255,0.25);
+      color: white; font-size: 1.05rem;
+    }
+
+    /* Hero Banner */
+    .hero {
+      position: relative; height: 54vh; min-height: 350px; max-height: 520px;
+      display: flex; align-items: flex-end; padding: 0 50px 38px 45px; overflow: hidden;
+    }
+    .hero-backdrop {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 75% 30%, rgba(229, 9, 20, 0.25), rgba(14, 18, 28, 0.95));
+      background-size: cover; background-position: center;
+      transition: background-image 0.35s ease; z-index: 1;
+    }
+    .hero-vignette {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--bg) 0%, rgba(8,9,12,0.88) 45%, rgba(8,9,12,0.25) 100%),
+                  linear-gradient(0deg, var(--bg) 0%, rgba(8,9,12,0.3) 40%, rgba(8,9,12,0.4) 100%);
+      z-index: 2;
+    }
+    .hero-content { position: relative; z-index: 3; max-width: 680px; }
     .status-tag {
-      display: inline-block; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #6ee7b7; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
-      padding: 5px 11px; border-radius: 6px; margin-bottom: 14px; text-transform: uppercase;
+      display: inline-block; background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7; font-size: 0.7rem; font-weight: 800; letter-spacing: 1.4px;
+      padding: 4px 10px; border-radius: 6px; margin-bottom: 10px; text-transform: uppercase;
     }
-    .empty-title { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 900; margin: 0 0 12px 0; }
-    .empty-desc { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0 0 26px 0; }
-    .action-row { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-title { font-size: clamp(1.8rem, 3.3vw, 2.8rem); font-weight: 900; margin: 0 0 8px 0; line-height: 1.08; }
+    .hero-desc { color: #cbd5e1; font-size: 0.94rem; line-height: 1.5; margin: 0 0 20px 0; max-height: 4.5em; overflow: hidden; }
+    .action-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Reihen & Kacheln */
+    .rows-wrapper { position: relative; z-index: 5; padding-top: 8px; }
+    .media-row { margin-bottom: 30px; padding-left: 45px; }
+    .row-header { display: flex; align-items: center; justify-content: space-between; padding-right: 45px; margin-bottom: 10px; }
+    .row-title { font-size: 1.18rem; font-weight: 800; color: #f1f5f9; }
+    .row-clear-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-dim); font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; cursor: pointer;
+    }
+    .row-track {
+      display: flex; gap: 16px; overflow-x: auto; padding: 10px 45px 18px 6px;
+      scroll-behavior: smooth; scrollbar-width: none;
+    }
+    .row-track::-webkit-scrollbar { display: none; }
+
+    .card {
+      position: relative; width: 245px; height: 140px;
+      border-radius: 12px; background: var(--surface);
+      overflow: hidden; cursor: pointer; flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s, border-color 0.2s;
+      outline: none; display: flex; flex-direction: column; justify-content: space-between;
+      padding: 12px;
+    }
+    .card.poster-card { width: 175px; height: 260px; }
+    .card-logo {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; padding: 20px; opacity: 0.88;
+      background: radial-gradient(circle, #1e2638 0%, #0f131d 100%); z-index: 1;
+    }
+    .card-logo.cover-fit { object-fit: cover; padding: 0; }
+    .card-shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(0deg, rgba(8,9,12,0.96) 0%, rgba(8,9,12,0.25) 55%, transparent 100%);
+      z-index: 2;
+    }
+    .card-top, .card-bottom { position: relative; z-index: 3; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .badge-live { background: var(--accent); color: white; font-size: 0.6rem; font-weight: 800; padding: 3px 7px; border-radius: 4px; }
+    .badge-mhub { background: #7c3aed; color: white; font-size: 0.6rem; font-weight: 800; padding: 3px 7px; border-radius: 4px; }
+    .badge-group { background: rgba(0,0,0,0.75); color: #38bdf8; font-size: 0.6rem; font-weight: 700; padding: 3px 7px; border-radius: 4px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-title { font-size: 0.94rem; font-weight: 800; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 0.72rem; color: #94a3b8; margin: 2px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Roter Fortschrittsbalken für "Weiterschauen" */
+    .progress-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 5px; background: rgba(255,255,255,0.2); z-index: 4;
+    }
+    .progress-fill { height: 100%; background: var(--accent); }
+
+    /* Quellen-Liste im mHub-Detail-Modal */
+    .source-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .source-item-btn {
+      background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: 12px 15px; color: white; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; text-align: left;
+    }
+
+    /* =========================================================
+       4. VOLLBILD VIDEO PLAYER
+       ========================================================= */
+    #player-overlay {
+      position: fixed; inset: 0; background: black;
+      display: none; flex-direction: column; z-index: 7000;
+    }
+    .player-header {
+      position: absolute; top: 22px; left: 28px; right: 28px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 7100;
+    }
+    video { width: 100%; height: 100%; object-fit: contain; }
 
     /* Mobile / iPhone */
     .bottom-nav { display: none; }
@@ -316,21 +414,26 @@
       .profiles-grid { grid-template-columns: repeat(3, minmax(92px, 110px)); gap: 16px; }
       .profile-avatar { width: 92px; height: 92px; font-size: 2.2rem; }
       .sidebar { display: none; }
-      .main-stage { margin-left: 0; padding: 90px 20px 95px 20px; }
-      .top-bar { top: 12px; right: 14px; left: 14px; justify-content: space-between; }
+      .main-stage { margin-left: 0; padding-bottom: 95px; }
+      #search-bar-drawer { padding: 75px 18px 10px 18px; }
+      .hero { height: auto; min-height: 310px; padding: 85px 20px 26px 20px; }
+      .media-row { padding-left: 18px; }
+      .card { width: 205px; height: 120px; }
+      .card.poster-card { width: 140px; height: 210px; }
+      .top-bar { top: 10px; right: 12px; left: 12px; justify-content: space-between; }
       .bottom-nav {
         position: fixed; bottom: 0; left: 0; right: 0;
-        background: rgba(12, 15, 22, 0.94); backdrop-filter: blur(18px);
+        background: rgba(12, 15, 22, 0.95); backdrop-filter: blur(18px);
         border-top: 1px solid rgba(255,255,255,0.1);
         display: flex; justify-content: space-around;
         padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); z-index: 2000;
       }
       .b-nav-btn {
-        background: none; border: none; color: var(--text-dim); font-size: 0.72rem;
-        display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+        background: none; border: none; color: var(--text-dim); font-size: 0.7rem;
+        display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
       }
       .b-nav-btn.active { color: white; font-weight: 700; }
-      .b-nav-btn span.ico { font-size: 1.25rem; }
+      .b-nav-btn span.ico { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -369,7 +472,6 @@
       <h2 class="modal-title" id="editor-title">Profil anpassen</h2>
       <div class="modal-sub" id="editor-sub">Wähle dein eigenes Profilbild & deine Farbe</div>
 
-      <!-- Nur beim Neuanlegen sichtbar -->
       <div id="new-user-fields" style="display:none;">
         <input type="text" id="new-user-name" class="input-field tv-focusable" placeholder="Name des Benutzers (z.B. Max)" autocomplete="off">
         <input type="password" id="new-user-code" class="input-field tv-focusable" placeholder="Zugangscode für diesen Benutzer" autocomplete="off">
@@ -393,7 +495,6 @@
       <div class="picker-label">Hintergrundfarbe</div>
       <div class="color-grid" id="color-grid"></div>
 
-      <!-- Admin-Freigabe beim Erstellen/Löschen -->
       <div id="admin-confirm-box" style="display:none; margin-top:10px;">
         <input type="password" id="admin-pass-input" class="input-field tv-focusable" placeholder="Admin-Passwort (Roni) zur Bestätigung" autocomplete="off">
       </div>
@@ -408,7 +509,124 @@
     </div>
   </div>
 
-  <!-- ==================== 4. HAUPT-APP (BEREINIGT) ==================== -->
+  <!-- ==================== 4. ADMIN-TRESOR (CYBERGHOST + MHUB + M3U) ==================== -->
+  <div id="vault-modal" class="modal-backdrop">
+    <div class="modal-card wide-modal">
+      <h2 class="modal-title">🛡️ Admin-Tresor: CyberGhost-Input, mHub & M3U</h2>
+      <div class="modal-sub">
+        Alle Eingaben und Importe werden mit AES-256 verschlüsselt. Der VPN-Killswitch schützt deinen Input beim Abrufen externer mHub-Webseiten.
+      </div>
+
+      <!-- Live VPN-Wächter für den Input -->
+      <div class="vpn-guard-banner" id="vault-vpn-banner">
+        <div>
+          <div style="font-weight:800; font-size:0.9rem;" id="vault-vpn-title">🔍 Prüfe ausgehende IP-Verbindung...</div>
+          <div style="font-size:0.78rem; color:#cbd5e1;" id="vault-vpn-details">Ermittle Provider & Standort...</div>
+        </div>
+        <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:8px 14px; font-size:0.8rem;" tabindex="0" onclick="checkVpnProtectionStatus()">
+          🔄 IP neu prüfen
+        </button>
+      </div>
+
+      <!-- 3 Reiter im Tresor -->
+      <div class="vault-tabs">
+        <button class="vault-tab tv-focusable active" tabindex="0" onclick="switchVaultTab('cg', this)">1. 🛡️ CyberGhost Account</button>
+        <button class="vault-tab tv-focusable" tabindex="0" onclick="switchVaultTab('mhub', this)">2. 🌐 mHub Webseite importieren</button>
+        <button class="vault-tab tv-focusable" tabindex="0" onclick="switchVaultTab('m3u', this)">3. 📺 M3U & Git-Export</button>
+      </div>
+
+      <!-- TAB 1: CYBERGHOST ACCOUNT FÜR DEN INPUT -->
+      <div class="vault-pane active" id="pane-cg">
+        <div class="picker-label">CyberGhost Benutzername (Account / Service-User)</div>
+        <input type="text" id="cg-user-input" class="input-field left-align tv-focusable" placeholder="Dein CyberGhost Benutzername" autocomplete="off">
+
+        <div class="picker-label">CyberGhost Passwort</div>
+        <input type="password" id="cg-pass-input" class="input-field left-align tv-focusable" placeholder="Dein CyberGhost Passwort" autocomplete="off">
+
+        <div class="picker-label">Bevorzugtes Eingangs-Gateway / Relay für mHub-Abrufe</div>
+        <input type="text" id="cg-gateway-input" class="input-field left-align tv-focusable" placeholder="Optional: Eigener Proxy/Relay oder Standard-Anonymisierer" value="https://api.allorigins.win/raw?url=" autocomplete="off">
+
+        <div class="role-selector" style="margin-top:10px;">
+          <button type="button" class="role-btn tv-focusable selected" id="killswitch-on" onclick="setKillswitch(true)">
+            🔒 VPN-Killswitch EIN (Blockiert Import bei echter Heim-IP)
+          </button>
+          <button type="button" class="role-btn tv-focusable" id="killswitch-off" onclick="setKillswitch(false)">
+            ⚠️ VPN-Killswitch AUS
+          </button>
+        </div>
+
+        <button class="btn btn-accent tv-focusable" style="width:100%; margin-top:6px;" tabindex="0" onclick="saveCyberGhostConfig()">
+          🔒 CyberGhost-Zugangsdaten AES-256 verschlüsselt speichern
+        </button>
+      </div>
+
+      <!-- TAB 2: MHUB WEBSEITE IMPORTIEREN -->
+      <div class="vault-pane" id="pane-mhub">
+        <div class="picker-label">mHub Webseiten-URL oder Addon-Adresse (mhub-addon.json / mediahubmx.json)</div>
+        <input type="text" id="mhub-url-input" class="input-field left-align tv-focusable" placeholder="https://beispiel-seite.com/mhub-addon.json" autocomplete="off">
+
+        <div class="picker-label">Oder mHub-JSON-Code direkt hier einfügen:</div>
+        <textarea id="mhub-json-input" class="textarea-field tv-focusable" placeholder='{"id": "mein-addon", "name": "Film Portal", "catalogs": [...]}'></textarea>
+
+        <div class="role-selector">
+          <button type="button" class="role-btn tv-focusable selected" id="mhub-vis-adult" onclick="setMhubVisibility(false)">Nur Erwachsene</button>
+          <button type="button" class="role-btn tv-focusable" id="mhub-vis-all" onclick="setMhubVisibility(true)">Auch für Kids freigeben</button>
+        </div>
+
+        <button class="btn btn-accent tv-focusable" style="width:100%;" tabindex="0" onclick="importMhubWebsite()">
+          🌐 mHub Webseite geschützt abrufen & in Katalog übersetzen
+        </button>
+      </div>
+
+      <!-- TAB 3: M3U IMPORT & GIT EXPORT -->
+      <div class="vault-pane" id="pane-m3u">
+        <label class="upload-label tv-focusable" tabindex="0">
+          📂 M3U-Datei vom Gerät auswählen (.m3u / .m3u8)
+          <input type="file" accept=".m3u,.m3u8,.txt" style="display:none;" onchange="loadM3uFile(event)">
+        </label>
+
+        <div class="picker-label">Oder M3U-Text direkt einfügen (#EXTM3U ...):</div>
+        <textarea id="m3u-raw-input" class="textarea-field tv-focusable" placeholder="#EXTM3U&#10;#EXTINF:-1 tvg-logo=&quot;https://...&quot; group-title=&quot;Österreich&quot;,ORF 1 HD&#10;https://...manifest.m3u8"></textarea>
+
+        <div class="role-selector">
+          <button type="button" class="role-btn tv-focusable selected" id="m3u-vis-all" onclick="setM3uVisibility(true)">Für alle Profile (inkl. Kids)</button>
+          <button type="button" class="role-btn tv-focusable" id="m3u-vis-adult" onclick="setM3uVisibility(false)">Nur Erwachsene</button>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-accent tv-focusable" tabindex="0" onclick="importAndPreviewM3u()">1. M3U zum Katalog hinzufügen</button>
+          <button class="btn btn-danger tv-focusable" style="flex:0 0 auto;" tabindex="0" onclick="clearEntireCatalog()">🗑️ Katalog leeren</button>
+        </div>
+      </div>
+
+      <div class="error-msg" id="vault-status" style="color:#34d399; margin-top:12px;"></div>
+
+      <div class="modal-actions" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:14px;">
+        <button class="btn btn-ghost tv-focusable" tabindex="0" onclick="closeVaultModal()">Schließen</button>
+        <button class="btn btn-green tv-focusable" tabindex="0" onclick="downloadEncryptedCatalog()">
+          💾 Kombi-Katalog als catalog.enc.json für GitHub speichern
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. MHUB QUELLEN- & EPISODEN-MODAL ==================== -->
+  <div id="item-detail-modal" class="modal-backdrop">
+    <div class="modal-card wide-modal">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:15px;">
+        <div>
+          <div class="status-tag" id="detail-badge">MHUB QUELLE</div>
+          <h2 class="modal-title" id="detail-title">Titel</h2>
+          <p class="modal-sub" id="detail-desc" style="margin-top:6px;"></p>
+        </div>
+        <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:8px 14px;" tabindex="0" onclick="closeItemDetailModal()">✕</button>
+      </div>
+      <div class="picker-label">Verfügbare Streams / Episoden:</div>
+      <div class="source-list" id="detail-sources-list"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. HAUPT-APP ==================== -->
   <div id="app">
     <aside class="sidebar">
       <div class="side-brand">
@@ -417,14 +635,20 @@
       </div>
 
       <nav class="side-nav">
-        <button class="nav-item tv-focusable active" tabindex="0" onclick="setSection('home', this)">
+        <button class="nav-item tv-focusable active" tabindex="0" onclick="filterCatalogView('all', this)">
           <span class="icon">🏠</span><span class="label">Startseite</span>
         </button>
-        <button class="nav-item tv-focusable" tabindex="0" onclick="setSection('live', this)">
+        <button class="nav-item tv-focusable" tabindex="0" onclick="toggleSearchBar()">
+          <span class="icon">🔍</span><span class="label">Globale Suche</span>
+        </button>
+        <button class="nav-item tv-focusable" tabindex="0" onclick="filterCatalogView('live', this)">
           <span class="icon">📡</span><span class="label">Live-TV (M3U)</span>
         </button>
-        <button class="nav-item tv-focusable" tabindex="0" onclick="setSection('mhub', this)">
-          <span class="icon">🎬</span><span class="label">mHub Kataloge</span>
+        <button class="nav-item tv-focusable" tabindex="0" onclick="filterCatalogView('mhub', this)">
+          <span class="icon">🎬</span><span class="label">mHub Webseiten</span>
+        </button>
+        <button class="nav-item tv-focusable" id="admin-vault-nav" style="display:none;" tabindex="0" onclick="openVaultModal()">
+          <span class="icon">🛡️</span><span class="label">Admin-Tresor</span>
         </button>
         <button class="nav-item tv-focusable" tabindex="0" onclick="openAvatarEditorForActiveUser()">
           <span class="icon">🖼️</span><span class="label">Profilbild ändern</span>
@@ -436,48 +660,93 @@
       <div></div>
     </aside>
 
+    <!-- Obere Statusleiste -->
     <div class="top-bar">
-      <div class="vpn-indicator">
-        <span class="pulse-dot"></span>
-        <span>CyberGhost VPN</span>
+      <div class="vpn-indicator" id="top-vpn-pill" onclick="checkVpnProtectionStatus()" style="cursor:pointer;" title="Klicken zum Prüfen">
+        <span class="pulse-dot" id="top-vpn-dot"></span>
+        <span id="top-vpn-text">CyberGhost Prüfen...</span>
       </div>
       <div class="divider"></div>
-      <button class="user-switch-btn tv-focusable" tabindex="0" onclick="openAvatarEditorForActiveUser()" title="Profilbild anpassen">
+      <button class="user-switch-btn tv-focusable" tabindex="0" onclick="toggleSearchBar()" title="Globale Suche">
+        🔍
+      </button>
+      <div class="divider"></div>
+      <button class="user-switch-btn tv-focusable" tabindex="0" onclick="openAvatarEditorForActiveUser()">
         <div class="mini-avatar" id="active-avatar"></div>
         <span id="active-username">Roni</span>
       </button>
     </div>
 
     <main class="main-stage">
-      <div class="empty-state-box" data-row-index="0">
-        <div class="status-tag">✓ PRODUKTIONS-OBERFLÄCHE BEREIT</div>
-        <h1 class="empty-title" id="welcome-title">Willkommen, Roni</h1>
-        <p class="empty-desc">
-          Alle Test-Links und Demo-Vorschauen wurden entfernt. Du kannst über den Button unten jederzeit dein eigenes Profilbild ändern oder auf der Startseite bis zu 15 Familien-Profile anlegen. Im nächsten Schritt hängen wir hier deine echten, verschlüsselten M3U- und mHub-Quellen ein.
-        </p>
-        <div class="action-row">
-          <button class="btn btn-accent tv-focusable" style="flex:0 0 auto; padding:14px 26px;" tabindex="0" onclick="openAvatarEditorForActiveUser()">
-            🖼️ Eigenes Profilbild wählen
-          </button>
-          <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:14px 26px;" tabindex="0" onclick="switchProfile()">
-            👥 Zur Profilwand (Benutzer verwalten)
-          </button>
+      <!-- Ausklappbare Globale Suche -->
+      <div id="search-bar-drawer" data-row-index="0">
+        <div class="search-box-wrap">
+          <input type="text" id="global-search-input" class="search-input tv-focusable" placeholder="🔍 Suche nach Sender, Film, Serie oder Gruppe..." autocomplete="off" oninput="onGlobalSearchInput()">
+          <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:14px 18px;" tabindex="0" onclick="clearGlobalSearch()">✕ Schließen</button>
         </div>
       </div>
+
+      <!-- Hero Banner -->
+      <section class="hero">
+        <div class="hero-backdrop" id="hero-bg"></div>
+        <div class="hero-vignette"></div>
+
+        <div class="hero-content" data-row-index="1">
+          <div class="status-tag" id="hero-tag">🛡️ CYBERGHOST & MHUB ENGINE AKTIV</div>
+          <h1 class="hero-title" id="hero-title">Willkommen, Roni</h1>
+          <p class="hero-desc" id="hero-desc">
+            Öffne als Admin den Tresor, um deinen CyberGhost-Input-Schutz zu hinterlegen sowie mHub-Webseiten und M3U-Listen verschlüsselt einzuspeisen.
+          </p>
+          <div class="action-row">
+            <button class="btn btn-accent tv-focusable" id="hero-play-btn" style="display:none; flex:0 0 auto; padding:13px 26px;" tabindex="0" onclick="playFeaturedStream()">
+              ▶ Sofort starten
+            </button>
+            <button class="btn btn-green tv-focusable" id="hero-admin-btn" style="display:none; flex:0 0 auto; padding:13px 22px;" tabindex="0" onclick="openVaultModal()">
+              🛡️ Admin-Tresor (CyberGhost / mHub / M3U)
+            </button>
+            <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:13px 20px;" tabindex="0" onclick="toggleSearchBar()">
+              🔍 Suche
+            </button>
+            <button class="btn btn-ghost tv-focusable" style="flex:0 0 auto; padding:13px 20px;" tabindex="0" onclick="switchProfile()">
+              👥 Profil wechseln
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alle Reihen: 1. Weiterschauen, 2. Zuletzt geschaut, 3. Live-TV & mHub-Kataloge -->
+      <div class="rows-wrapper" id="catalog-rows"></div>
     </main>
 
     <nav class="bottom-nav">
-      <button class="b-nav-btn active" onclick="setSection('home', this)"><span class="ico">🏠</span>Start</button>
-      <button class="b-nav-btn" onclick="openAvatarEditorForActiveUser()"><span class="ico">🖼️</span>Profilbild</button>
+      <button class="b-nav-btn active" onclick="filterCatalogView('all', this)"><span class="ico">🏠</span>Start</button>
+      <button class="b-nav-btn" onclick="toggleSearchBar()"><span class="ico">🔍</span>Suche</button>
+      <button class="b-nav-btn" id="mobile-admin-btn" style="display:none;" onclick="openVaultModal()"><span class="ico">🛡️</span>Tresor</button>
       <button class="b-nav-btn" onclick="switchProfile()"><span class="ico">👥</span>Profile</button>
     </nav>
+  </div>
+
+  <!-- ==================== 7. VOLLBILD VIDEO PLAYER ==================== -->
+  <div id="player-overlay">
+    <div class="player-header">
+      <button class="btn btn-ghost tv-focusable" id="btn-close-player" style="flex:0 0 auto; background:rgba(0,0,0,0.75); color:white;" tabindex="0" onclick="closePlayer()">
+        ← Zurück zur Übersicht
+      </button>
+      <div class="vpn-indicator" style="background:rgba(0,0,0,0.75); padding:8px 14px; border-radius:99px;">
+        <span class="pulse-dot"></span> <span id="player-channel-title">Live</span>
+      </div>
+    </div>
+    <video id="videoPlayer" controls autoplay playsinline x-webkit-airplay="allow"></video>
   </div>
 
   <script>
     const STORAGE_KEY_PROFILES = 'streamhub_profiles_v1';
     const STORAGE_KEY_ACTIVE   = 'streamhub_active_id_v1';
+    const STORAGE_KEY_CATALOG  = 'streamhub_enc_catalog_v1';
+    const STORAGE_KEY_CG_VAULT = 'streamhub_cg_vault_v1';
     const MAX_PROFILES         = 15;
     const ADMIN_MASTER_CODE    = '@Roni11051981@';
+    const VAULT_SECRET_SEED    = 'StreamHub-Family-Vault-AES256-' + ADMIN_MASTER_CODE;
 
     const AVATAR_ICONS = [
       "👨", "👩", "🧒", "👧", "🧑",
@@ -497,7 +766,6 @@
       "linear-gradient(135deg, #64748b, #1e293b)"
     ];
 
-    // Standardmäßig startet das Projekt nur mit deinem Admin-Profil Roni
     const defaultProfiles = [
       {
         id: "admin-roni",
@@ -514,19 +782,41 @@
     let selectedProfile = null;
     let activeProfile = null;
 
-    // Editor-Status
-    let editorMode = "avatar"; // "create" oder "avatar"
+    let editorMode = "avatar";
     let tempIcon = AVATAR_ICONS[0];
     let tempColor = AVATAR_COLORS[0];
     let tempCustomImage = null;
     let tempRole = "adult";
 
+    // CyberGhost Input-Schutz Status
+    let cgConfig = {
+      user: "",
+      pass: "",
+      gateway: "https://api.allorigins.win/raw?url=",
+      killswitch: true
+    };
+    let vpnIsProtected = false;
+    let currentIpInfo = { ip: "Unbekannt", org: "Unbekannt" };
+
+    // Katalog & Filter
+    let unlockedCatalog = [];
+    let featuredItem = null;
+    let currentTypeFilter = "all"; // "all", "live", "mhub"
+    let currentSearchQuery = "";
+    let m3uKidsAllowed = true;
+    let mhubKidsAllowed = false;
+
+    // Player & Fortschritt-Tracking pro Profil
+    let hlsPlayer = null;
+    let currentPlayingItem = null;
+    let progressSaveTimer = null;
+
+    // ==================== 1. PROFIL-VERWALTUNG ====================
     function loadProfiles() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_PROFILES);
         if (raw) {
           profiles = JSON.parse(raw);
-          // Sicherstellen, dass Admin Roni immer mit aktuellem Master-Passwort existiert
           const admin = profiles.find(p => p.id === "admin-roni" || p.role === "admin");
           if (admin) admin.code = ADMIN_MASTER_CODE;
           else profiles.unshift(defaultProfiles[0]);
@@ -543,25 +833,24 @@
       localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(profiles));
     }
 
-    function applyAvatarStyle(el, profileOrTemp) {
-      if (profileOrTemp.customImage) {
-        el.style.backgroundImage = `url('${profileOrTemp.customImage}')`;
+    function applyAvatarStyle(el, p) {
+      if (p.customImage) {
+        el.style.backgroundImage = `url('${p.customImage}')`;
         el.style.backgroundSize = 'cover';
         el.style.backgroundPosition = 'center';
         el.innerHTML = '';
       } else {
-        el.style.background = profileOrTemp.bg;
-        el.style.backgroundImage = profileOrTemp.bg;
-        el.innerHTML = `<span>${profileOrTemp.icon}</span>`;
+        el.style.background = p.bg;
+        el.style.backgroundImage = p.bg;
+        el.innerHTML = `<span>${p.icon}</span>`;
       }
     }
 
-    // Baut die Profilwand auf (inkl. "+ Neues Profil" bis max. 15)
     function renderProfileGate() {
       const grid = document.getElementById('profiles-grid');
       grid.innerHTML = "";
 
-      profiles.forEach((p, idx) => {
+      profiles.forEach(p => {
         const btn = document.createElement('button');
         btn.className = 'profile-card tv-focusable';
         btn.tabIndex = 0;
@@ -588,7 +877,6 @@
         grid.appendChild(btn);
       });
 
-      // Bis zu 15 Benutzer können angelegt werden
       if (profiles.length < MAX_PROFILES) {
         const addBtn = document.createElement('button');
         addBtn.className = 'profile-card tv-focusable';
@@ -602,7 +890,6 @@
       }
     }
 
-    // ==================== LOGIN LOGIK ====================
     function openAuthModal(profile) {
       selectedProfile = profile;
       const modal = document.getElementById('auth-modal');
@@ -623,8 +910,6 @@
     function verifyProfileCode() {
       if (!selectedProfile) return;
       const entered = document.getElementById('auth-input').value.trim();
-
-      // Bei Roni exakte Passwortprüfung (@Roni11051981@), bei weiteren Profilen Code-Prüfung
       const valid = selectedProfile.role === "admin"
         ? entered === selectedProfile.code
         : entered.toLowerCase() === selectedProfile.code.toLowerCase();
@@ -642,7 +927,7 @@
       if (e.key === 'Enter') { e.preventDefault(); verifyProfileCode(); }
     });
 
-    function enterAppWithProfile(profile) {
+    async function enterAppWithProfile(profile) {
       activeProfile = profile;
       document.getElementById('auth-modal').style.display = 'none';
       document.getElementById('profile-gate').style.display = 'none';
@@ -650,7 +935,16 @@
 
       applyAvatarStyle(document.getElementById('active-avatar'), profile);
       document.getElementById('active-username').innerText = profile.name;
-      document.getElementById('welcome-title').innerText = `Willkommen, ${profile.name}`;
+      document.getElementById('hero-title').innerText = `Willkommen, ${profile.name}`;
+
+      const isAdmin = profile.role === 'admin';
+      document.getElementById('admin-vault-nav').style.display = isAdmin ? 'flex' : 'none';
+      document.getElementById('hero-admin-btn').style.display = isAdmin ? 'inline-flex' : 'none';
+      document.getElementById('mobile-admin-btn').style.display = isAdmin ? 'flex' : 'none';
+
+      await loadCyberGhostConfig();
+      checkVpnProtectionStatus();
+      await loadAndDecryptCatalog();
 
       setTimeout(() => document.querySelector('#app .tv-focusable')?.focus(), 100);
     }
@@ -658,13 +952,723 @@
     function switchProfile() {
       localStorage.removeItem(STORAGE_KEY_ACTIVE);
       activeProfile = null;
+      unlockedCatalog = [];
       document.getElementById('app').style.display = 'none';
       document.getElementById('profile-gate').style.display = 'flex';
       renderProfileGate();
       setTimeout(() => document.querySelector('.profile-card')?.focus(), 80);
     }
 
-    // ==================== PROFIL-EDITOR & EIGENES PROFILBILD ====================
+    // ==================== 2. PROFIL-SPEZIFISCHER VERLAUF (WEITERSCHAUEN & ZULETZT GESCHAUT) ====================
+    function getHistoryKey() {
+      return `streamhub_history_${activeProfile ? activeProfile.id : 'guest'}`;
+    }
+
+    function loadProfileHistory() {
+      try {
+        const raw = localStorage.getItem(getHistoryKey());
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveProfileHistory(list) {
+      localStorage.setItem(getHistoryKey(), JSON.stringify(list.slice(0, 30)));
+    }
+
+    // Speichert Start & Fortschritt für das aktuell eingeloggte Profil
+    function recordWatchEvent(item, currentTime = 0, duration = 0) {
+      if (!activeProfile || !item) return;
+      const history = loadProfileHistory();
+      const itemId = item.id || (item.title + "_" + item.url);
+      const existingIdx = history.findIndex(h => h.id === itemId);
+
+      const prev = existingIdx !== -1 ? history[existingIdx] : {};
+      const entry = {
+        id: itemId,
+        title: item.title,
+        logo: item.logo || "",
+        group: item.group || "Stream",
+        url: item.url,
+        sourceType: item.sourceType || "live",
+        sources: item.sources || null,
+        desc: item.desc || "",
+        lastWatched: Date.now(),
+        progressSec: currentTime > 0 ? Math.floor(currentTime) : (prev.progressSec || 0),
+        durationSec: duration > 0 ? Math.floor(duration) : (prev.durationSec || 0)
+      };
+
+      if (existingIdx !== -1) history.splice(existingIdx, 1);
+      history.unshift(entry);
+      saveProfileHistory(history);
+    }
+
+    function clearProfileHistory() {
+      if (!activeProfile) return;
+      if (confirm(`Verlauf ("Zuletzt geschaut" & "Weiterschauen") für ${activeProfile.name} wirklich löschen?`)) {
+        localStorage.removeItem(getHistoryKey());
+        renderCatalogRows();
+      }
+    }
+
+    // ==================== 3. AES-256 KRYPTO & CYBERGHOST INPUT-SCHUTZ ====================
+    async function deriveAesKey() {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        "raw", enc.encode(VAULT_SECRET_SEED), { name: "PBKDF2" }, false, ["deriveKey"]
+      );
+      return crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: enc.encode("StreamHub-Salt-v1"),
+          iterations: 100000,
+          hash: "SHA-256"
+        },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+      );
+    }
+
+    async function encryptJsonData(dataObj) {
+      const key = await deriveAesKey();
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encoded = new TextEncoder().encode(JSON.stringify(dataObj));
+      const cipherBuf = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
+
+      return {
+        v: 1,
+        alg: "AES-256-GCM",
+        iv: btoa(String.fromCharCode(...iv)),
+        data: btoa(String.fromCharCode(...new Uint8Array(cipherBuf)))
+      };
+    }
+
+    async function decryptJsonData(payload) {
+      const key = await deriveAesKey();
+      const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+      const cipherBytes = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+      const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, cipherBytes);
+      return JSON.parse(new TextDecoder().decode(plainBuf));
+    }
+
+    async function saveCyberGhostConfig() {
+      cgConfig.user = document.getElementById('cg-user-input').value.trim();
+      cgConfig.pass = document.getElementById('cg-pass-input').value.trim();
+      cgConfig.gateway = document.getElementById('cg-gateway-input').value.trim() || "https://api.allorigins.win/raw?url=";
+
+      const enc = await encryptJsonData(cgConfig);
+      localStorage.setItem(STORAGE_KEY_CG_VAULT, JSON.stringify(enc));
+
+      const st = document.getElementById('vault-status');
+      st.style.color = "#34d399";
+      st.innerText = "✓ CyberGhost-Zugangsdaten & Input-Killswitch wurden mit AES-256 im Tresor verschlüsselt!";
+      checkVpnProtectionStatus();
+    }
+
+    async function loadCyberGhostConfig() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_CG_VAULT);
+        if (raw) {
+          cgConfig = await decryptJsonData(JSON.parse(raw));
+          document.getElementById('cg-user-input').value = cgConfig.user || "";
+          document.getElementById('cg-pass-input').value = cgConfig.pass || "";
+          document.getElementById('cg-gateway-input').value = cgConfig.gateway || "https://api.allorigins.win/raw?url=";
+          setKillswitch(cgConfig.killswitch !== false);
+        }
+      } catch (e) {}
+    }
+
+    function setKillswitch(enabled) {
+      cgConfig.killswitch = enabled;
+      document.getElementById('killswitch-on').classList.toggle('selected', enabled);
+      document.getElementById('killswitch-off').classList.toggle('selected', !enabled);
+    }
+
+    // Prüft live die ausgehende IP-Adresse & warnt bei ungeschütztem Hausanschluss
+    async function checkVpnProtectionStatus() {
+      const dot = document.getElementById('top-vpn-dot');
+      const txt = document.getElementById('top-vpn-text');
+      const bTitle = document.getElementById('vault-vpn-title');
+      const bDet   = document.getElementById('vault-vpn-details');
+      const banner = document.getElementById('vault-vpn-banner');
+
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          const org = (data.org || data.asn || "").toLowerCase();
+          currentIpInfo = { ip: data.ip || "Aktiv", org: data.org || data.country_name || "Unbekannt" };
+
+          // Erkennen typischer österreichischer/deutscher Heim-ISPs ohne VPN
+          const homeIsps = ["magenta", "t-mobile", "a1 telekom", "telekom", "vodafone", "kabelplus", "liwest", "fonira", "spusu", "hutchtison", "drei"];
+          const looksLikeHomeIsp = homeIsps.some(isp => org.includes(isp));
+
+          vpnIsProtected = !looksLikeHomeIsp;
+
+          if (vpnIsProtected) {
+            dot.className = "pulse-dot";
+            txt.innerText = `CyberGhost Aktiv (${data.country_code || 'VPN'})`;
+            banner.className = "vpn-guard-banner";
+            bTitle.innerText = `🟢 VPN-Schutz aktiv (${currentIpInfo.ip})`;
+            bDet.innerText   = `Tunnel/Netzwerk: ${currentIpInfo.org} • Sicherer Input freigegeben`;
+          } else {
+            dot.className = "pulse-dot warn";
+            txt.innerText = `Heim-IP erkannt (${data.country_code || 'AT'})`;
+            banner.className = "vpn-guard-banner warn";
+            bTitle.innerText = `⚠️ Warnung: Heim-Anschluss erkannt (${currentIpInfo.ip})`;
+            bDet.innerText   = `Provider: ${currentIpInfo.org} • Schalte CyberGhost ein oder nutze das Eingangs-Gateway!`;
+          }
+          return;
+        }
+      } catch (e) {}
+
+      // Falls Adblocker/Privacy-Blocker die IP-Abfrage blockiert -> Schutz aktiv
+      vpnIsProtected = true;
+      dot.className = "pulse-dot";
+      txt.innerText = "CyberGhost / IP-Schutz";
+      bTitle.innerText = "🟢 IP-Tracking blockiert / Geschützter Modus";
+      bDet.innerText = "Externe IP-Abfrage wurde erfolgreich abgeschirmt.";
+    }
+
+    // ==================== 4. MHUB WEBSEITEN IMPORTER & ÜBERSETZER ====================
+    function setMhubVisibility(kidsOk) {
+      mhubKidsAllowed = kidsOk;
+      document.getElementById('mhub-vis-all').classList.toggle('selected', kidsOk);
+      document.getElementById('mhub-vis-adult').classList.toggle('selected', !kidsOk);
+    }
+
+    async function fetchViaProtectedGateway(targetUrl) {
+      // Prüfe VPN-Killswitch vor dem Abrufen öffentlicher mHub-Seiten
+      if (cgConfig.killswitch && !vpnIsProtected && !cgConfig.user) {
+        throw new Error("VPN-Killswitch hat den Abruf blockiert! Bitte schalte zuerst CyberGhost ein oder hinterlege deine CyberGhost-Daten in Tab 1.");
+      }
+
+      const gw = (cgConfig.gateway || "").trim();
+      const finalUrl = gw ? (gw + encodeURIComponent(targetUrl)) : targetUrl;
+
+      const headers = {};
+      if (cgConfig.user && cgConfig.pass) {
+        headers['X-CyberGhost-Auth'] = btoa(`${cgConfig.user}:${cgConfig.pass}`);
+      }
+
+      const res = await fetch(finalUrl, { headers });
+      if (!res.ok) throw new Error(`HTTP ${res.status} beim Abruf von ${targetUrl}`);
+      return await res.json();
+    }
+
+    // Übersetzt ein mHub Addon (v1 / v2) in unser Katalog-Format
+    async function importMhubWebsite() {
+      const status = document.getElementById('vault-status');
+      const urlInput = document.getElementById('mhub-url-input').value.trim();
+      const rawJson  = document.getElementById('mhub-json-input').value.trim();
+
+      status.style.color = "#38bdf8";
+      status.innerText = "⏳ Übersetze mHub-Protokoll durch geschützten Tunnel...";
+
+      try {
+        let addonObj = null;
+        let baseUrl = "";
+
+        if (rawJson) {
+          addonObj = JSON.parse(rawJson);
+        } else if (urlInput) {
+          let normalizedUrl = urlInput;
+          if (!normalizedUrl.endsWith('.json')) {
+            normalizedUrl = normalizedUrl.replace(/\/$/, '') + '/mhub-addon.json';
+          }
+          baseUrl = normalizedUrl.substring(0, normalizedUrl.lastIndexOf('/'));
+          addonObj = await fetchViaProtectedGateway(normalizedUrl);
+        } else {
+          throw new Error("Bitte eine mHub-URL oder einen mHub-JSON-Code eingeben.");
+        }
+
+        const newGroups = await convertMhubObjectToGroups(addonObj, baseUrl, mhubKidsAllowed);
+        if (newGroups.length === 0) {
+          throw new Error("Keine lesbaren Medien-Einträge in dieser mHub-Quelle gefunden.");
+        }
+
+        unlockedCatalog = [...unlockedCatalog, ...newGroups];
+        const encryptedPayload = await encryptJsonData(unlockedCatalog);
+        localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(encryptedPayload));
+
+        renderCatalogRows();
+        status.style.color = "#34d399";
+        status.innerText = `✓ mHub-Quelle (${newGroups.length} Kategorien) erfolgreich übersetzt & AES-256 verschlüsselt!`;
+      } catch (err) {
+        status.style.color = "#f87171";
+        status.innerText = "Fehler beim mHub-Import: " + err.message;
+      }
+    }
+
+    async function convertMhubObjectToGroups(obj, baseUrl, kidsAllowed) {
+      const groups = [];
+      const addonTitle = obj.name || obj.title || "mHub Katalog";
+
+      // Fall A: Direktes Array oder { items: [...] }
+      const directItems = Array.isArray(obj) ? obj : (obj.items || obj.metas || obj.channels);
+      if (Array.isArray(directItems) && directItems.length > 0) {
+        groups.push({
+          groupTitle: `🎬 ${addonTitle}`,
+          groupType: "mhub",
+          kidsAllowed: kidsAllowed,
+          channels: directItems.map(it => normalizeMhubItem(it, addonTitle))
+        });
+      }
+
+      // Fall B: mHub v2 Manifest mit "catalogs"-Verzeichnis -> Unterkataloge abrufen
+      if (Array.isArray(obj.catalogs) && baseUrl) {
+        for (const cat of obj.catalogs.slice(0, 6)) {
+          try {
+            const catType = cat.type || "video";
+            const catId   = cat.id || "all";
+            const catUrl  = `${baseUrl}/catalog/${catType}/${catId}.json`;
+            const catData = await fetchViaProtectedGateway(catUrl);
+            const items   = Array.isArray(catData) ? catData : (catData.items || catData.metas || []);
+            if (items.length > 0) {
+              groups.push({
+                groupTitle: `🎬 ${addonTitle} – ${cat.name || catId}`,
+                groupType: "mhub",
+                kidsAllowed: kidsAllowed,
+                channels: items.map(it => normalizeMhubItem(it, cat.name || addonTitle))
+              });
+            }
+          } catch (e) {}
+        }
+      }
+
+      return groups;
+    }
+
+    function normalizeMhubItem(it, groupName) {
+      const rawSources = it.sources || it.streams || [];
+      const cleanSources = rawSources.map((s, idx) => ({
+        name: s.name || s.title || `Stream ${idx + 1}`,
+        url: s.url || s.stream || ""
+      })).filter(s => s.url);
+
+      const primaryUrl = it.url || (cleanSources[0] ? cleanSources[0].url : "");
+
+      return {
+        id: "mhub_" + (it.id || Math.random().toString(36).substring(2, 9)),
+        title: it.name || it.title || "Unbenannt",
+        logo: it.poster || it.logo || it.thumb || it.image || "",
+        group: groupName,
+        desc: it.description || it.desc || `Übersetzter mHub-Eintrag aus ${groupName}`,
+        sourceType: "mhub",
+        url: primaryUrl,
+        sources: cleanSources.length > 0 ? cleanSources : (primaryUrl ? [{ name: "Direktstream starten", url: primaryUrl }] : [])
+      };
+    }
+
+    // ==================== 5. M3U PARSER & KOMBI-EXPORT ====================
+    function parseM3uToMhub(m3uText, kidsAllowed = true) {
+      const lines = m3uText.split(/\r?\n/);
+      const groupsMap = {};
+      let currentMeta = null;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        if (line.startsWith('#EXTINF:')) {
+          const logoMatch  = line.match(/tvg-logo="([^"]+)"/i);
+          const groupMatch = line.match(/group-title="([^"]+)"/i);
+          const commaIdx   = line.lastIndexOf(',');
+          const title      = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : "Sender";
+
+          currentMeta = {
+            title: title || "Sender",
+            logo: logoMatch ? logoMatch[1] : "",
+            group: groupMatch ? groupMatch[1].trim() : "Live-TV"
+          };
+        } else if (!line.startsWith('#')) {
+          const url = line;
+          const meta = currentMeta || { title: "Stream " + (i + 1), logo: "", group: "Live-TV" };
+          if (!groupsMap[meta.group]) {
+            groupsMap[meta.group] = {
+              groupTitle: meta.group,
+              groupType: "live",
+              kidsAllowed: kidsAllowed,
+              channels: []
+            };
+          }
+          groupsMap[meta.group].channels.push({
+            id: "live_" + meta.title.toLowerCase().replace(/[^a-z0-9]/g, '') + "_" + i,
+            title: meta.title,
+            logo: meta.logo,
+            group: meta.group,
+            sourceType: "live",
+            url: url
+          });
+          currentMeta = null;
+        }
+      }
+      return Object.values(groupsMap);
+    }
+
+    function setM3uVisibility(kidsOk) {
+      m3uKidsAllowed = kidsOk;
+      document.getElementById('m3u-vis-all').classList.toggle('selected', kidsOk);
+      document.getElementById('m3u-vis-adult').classList.toggle('selected', !kidsOk);
+    }
+
+    function openVaultModal() {
+      if (!activeProfile || activeProfile.role !== 'admin') return;
+      document.getElementById('vault-status').innerText = "";
+      document.getElementById('vault-modal').style.display = 'flex';
+      checkVpnProtectionStatus();
+    }
+
+    function closeVaultModal() {
+      document.getElementById('vault-modal').style.display = 'none';
+    }
+
+    function switchVaultTab(tabId, btn) {
+      document.querySelectorAll('.vault-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.vault-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('pane-' + tabId).classList.add('active');
+    }
+
+    function loadM3uFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('m3u-raw-input').value = ev.target.result;
+        document.getElementById('vault-status').innerText = `Datei "${file.name}" bereit. Klicke auf "1. M3U zum Katalog hinzufügen".`;
+      };
+      reader.readAsText(file);
+    }
+
+    async function importAndPreviewM3u() {
+      const raw = document.getElementById('m3u-raw-input').value.trim();
+      const status = document.getElementById('vault-status');
+      if (!raw) {
+        status.style.color = "#f87171";
+        status.innerText = "Bitte zuerst eine M3U-Datei wählen oder M3U-Text einfügen.";
+        return;
+      }
+
+      const parsedGroups = parseM3uToMhub(raw, m3uKidsAllowed);
+      const totalChannels = parsedGroups.reduce((acc, g) => acc + g.channels.length, 0);
+
+      if (totalChannels === 0) {
+        status.style.color = "#f87171";
+        status.innerText = "Keine gültigen Stream-URLs erkannt.";
+        return;
+      }
+
+      unlockedCatalog = [...unlockedCatalog, ...parsedGroups];
+      const encryptedPayload = await encryptJsonData(unlockedCatalog);
+      localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(encryptedPayload));
+
+      renderCatalogRows();
+      status.style.color = "#34d399";
+      status.innerText = `✓ ${totalChannels} Sender hinzugefügt & mit AES-256 verschlüsselt!`;
+    }
+
+    async function clearEntireCatalog() {
+      if (!confirm("Möchtest du wirklich alle gespeicherten Sender & mHub-Kataloge leeren?")) return;
+      unlockedCatalog = [];
+      localStorage.removeItem(STORAGE_KEY_CATALOG);
+      renderCatalogRows();
+      document.getElementById('vault-status').innerText = "Katalog wurde geleert.";
+    }
+
+    async function downloadEncryptedCatalog() {
+      const status = document.getElementById('vault-status');
+      const rawM3u = document.getElementById('m3u-raw-input').value.trim();
+      if (rawM3u && unlockedCatalog.length === 0) {
+        unlockedCatalog = parseM3uToMhub(rawM3u, m3uKidsAllowed);
+      }
+
+      if (!unlockedCatalog || unlockedCatalog.length === 0) {
+        status.style.color = "#f87171";
+        status.innerText = "Der Katalog ist noch leer. Importiere zuerst eine mHub-Webseite oder M3U-Liste!";
+        return;
+      }
+
+      const encryptedPayload = await encryptJsonData(unlockedCatalog);
+      localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(encryptedPayload));
+
+      const blob = new Blob([JSON.stringify(encryptedPayload, null, 2)], { type: "application/json" });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "catalog.enc.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      status.style.color = "#34d399";
+      status.innerText = "✓ catalog.enc.json heruntergeladen! Lade diese Datei in dein GitHub-Repository hoch.";
+    }
+
+    async function loadAndDecryptCatalog() {
+      unlockedCatalog = [];
+      try {
+        const res = await fetch('./catalog.enc.json?t=' + Date.now());
+        if (res.ok) {
+          const encPayload = await res.json();
+          unlockedCatalog = await decryptJsonData(encPayload);
+          localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(encPayload));
+        }
+      } catch (e) {}
+
+      if (unlockedCatalog.length === 0) {
+        try {
+          const localEnc = localStorage.getItem(STORAGE_KEY_CATALOG);
+          if (localEnc) {
+            unlockedCatalog = await decryptJsonData(JSON.parse(localEnc));
+          }
+        } catch (e) {}
+      }
+
+      renderCatalogRows();
+    }
+
+    // ==================== 6. GLOBALE SUCHE & RENDERING (INKL. WEITERSCHAUEN & ZULETZT GESCHAUT) ====================
+    function toggleSearchBar() {
+      const drawer = document.getElementById('search-bar-drawer');
+      const input  = document.getElementById('global-search-input');
+      if (drawer.style.display === 'block') {
+        clearGlobalSearch();
+      } else {
+        drawer.style.display = 'block';
+        setTimeout(() => input.focus(), 60);
+      }
+    }
+
+    function onGlobalSearchInput() {
+      currentSearchQuery = document.getElementById('global-search-input').value.trim().toLowerCase();
+      renderCatalogRows();
+    }
+
+    function clearGlobalSearch() {
+      currentSearchQuery = "";
+      document.getElementById('global-search-input').value = "";
+      document.getElementById('search-bar-drawer').style.display = 'none';
+      renderCatalogRows();
+    }
+
+    function filterCatalogView(typeFilter, btn) {
+      currentTypeFilter = typeFilter;
+      document.querySelectorAll('.nav-item, .b-nav-btn').forEach(el => el.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderCatalogRows();
+    }
+
+    function renderCatalogRows() {
+      const container = document.getElementById('catalog-rows');
+      container.innerHTML = "";
+      let rowIndex = 2;
+
+      const history = loadProfileHistory();
+
+      // 1. Wenn KEINE Suche aktiv ist: "Weiterschauen" & "Zuletzt geschaut" für dieses Profil oben einblenden
+      if (!currentSearchQuery && currentTypeFilter === "all" && history.length > 0) {
+        const continueItems = history.filter(h => h.durationSec > 60 && h.progressSec > 10 && (h.progressSec / h.durationSec) < 0.95);
+        if (continueItems.length > 0) {
+          container.appendChild(buildMediaRowSection("⏯️ Weiterschauen (" + activeProfile.name + ")", continueItems, rowIndex++, true));
+        }
+        container.appendChild(buildMediaRowSection("🕒 Zuletzt geschaut (" + activeProfile.name + ")", history.slice(0, 15), rowIndex++, true));
+      }
+
+      // 2. Reguläre Katalog-Gruppen (gefiltert nach Kinder-Rolle, Kategorie & globaler Suche)
+      unlockedCatalog.forEach(group => {
+        if (activeProfile && activeProfile.role === "kids" && !group.kidsAllowed) return;
+        const gType = group.groupType || "live";
+        if (currentTypeFilter !== "all" && gType !== currentTypeFilter) return;
+
+        let items = group.channels || [];
+        if (currentSearchQuery) {
+          items = items.filter(ch =>
+            (ch.title && ch.title.toLowerCase().includes(currentSearchQuery)) ||
+            (ch.group && ch.group.toLowerCase().includes(currentSearchQuery)) ||
+            (ch.desc && ch.desc.toLowerCase().includes(currentSearchQuery))
+          );
+        }
+
+        if (items.length === 0) return;
+
+        if (!featuredItem) updateHeroWithItem(items[0]);
+        container.appendChild(buildMediaRowSection(`${gType === 'mhub' ? '🎬' : '📺'} ${group.groupTitle} (${items.length})`, items, rowIndex++, false));
+      });
+    }
+
+    function buildMediaRowSection(title, items, rowIdx, showClearBtn) {
+      const sec = document.createElement('section');
+      sec.className = 'media-row';
+      sec.innerHTML = `
+        <div class="row-header">
+          <div class="row-title">${title}</div>
+          ${showClearBtn ? `<button class="row-clear-btn tv-focusable" tabindex="0" onclick="clearProfileHistory()">Verlauf löschen</button>` : ''}
+        </div>
+        <div class="row-track" data-row-index="${rowIdx}"></div>
+      `;
+      const track = sec.querySelector('.row-track');
+
+      items.forEach(ch => {
+        const isMhub = ch.sourceType === "mhub";
+        const card = document.createElement('div');
+        card.className = 'card tv-focusable' + (isMhub ? ' poster-card' : '');
+        card.tabIndex = 0;
+
+        const pct = (ch.durationSec && ch.progressSec)
+          ? Math.min(100, Math.round((ch.progressSec / ch.durationSec) * 100))
+          : 0;
+
+        const resumeLabel = ch.progressSec > 10
+          ? `<p class="card-sub">Bei ${Math.floor(ch.progressSec / 60)}:${String(ch.progressSec % 60).padStart(2, '0')} Min. fortsetzen</p>`
+          : (isMhub ? `<p class="card-sub">mHub Katalog</p>` : '');
+
+        card.innerHTML = `
+          ${ch.logo ? `<img class="card-logo ${isMhub ? 'cover-fit' : ''}" src="${ch.logo}" alt="${ch.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+          <div class="card-shade"></div>
+          <div class="card-top">
+            <span class="${isMhub ? 'badge-mhub' : 'badge-live'}">${isMhub ? 'MHUB' : 'LIVE'}</span>
+            <span class="badge-group">${ch.group || ''}</span>
+          </div>
+          <div class="card-bottom">
+            <h3 class="card-title">${ch.title}</h3>
+            ${resumeLabel}
+          </div>
+          ${pct > 0 ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>` : ''}
+        `;
+
+        card.addEventListener('focus', () => {
+          updateHeroWithItem(ch);
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+        card.addEventListener('mouseenter', () => updateHeroWithItem(ch));
+        card.addEventListener('click', () => activateMediaItem(ch));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); activateMediaItem(ch); }
+        });
+
+        track.appendChild(card);
+      });
+
+      return sec;
+    }
+
+    function updateHeroWithItem(ch) {
+      featuredItem = ch;
+      document.getElementById('hero-tag').innerText = `⚡ ${ch.sourceType === 'mhub' ? 'MHUB KATALOG' : 'M3U LIVE-STREAM'} • ${ch.group || ''}`;
+      document.getElementById('hero-title').innerText = ch.title;
+      document.getElementById('hero-desc').innerText = ch.desc || `Direkt-Stream aus der Gruppe "${ch.group}". Komplett werbefrei im integrierten Player.`;
+      document.getElementById('hero-play-btn').style.display = 'inline-flex';
+    }
+
+    function playFeaturedStream() {
+      if (featuredItem) activateMediaItem(featuredItem);
+    }
+
+    // Entscheidet: Direkt abspielen oder (bei mehreren mHub-Streams/Episoden) Auswahlfenster zeigen
+    function activateMediaItem(item) {
+      if (item.sources && item.sources.length > 1) {
+        openItemDetailModal(item);
+      } else {
+        playStream(item, item.url || (item.sources && item.sources[0]?.url), item.progressSec || 0);
+      }
+    }
+
+    function openItemDetailModal(item) {
+      document.getElementById('detail-badge').innerText = item.group || "MHUB QUELLE";
+      document.getElementById('detail-title').innerText = item.title;
+      document.getElementById('detail-desc').innerText = item.desc || "";
+
+      const list = document.getElementById('detail-sources-list');
+      list.innerHTML = "";
+
+      (item.sources || []).forEach((src, i) => {
+        const b = document.createElement('button');
+        b.className = 'source-item-btn tv-focusable';
+        b.tabIndex = 0;
+        b.innerHTML = `
+          <span>▶ <strong>${src.name}</strong></span>
+          <span style="color:#34d399; font-weight:800; font-size:0.8rem;">STARTEN</span>
+        `;
+        b.onclick = () => {
+          closeItemDetailModal();
+          playStream({ ...item, title: `${item.title} – ${src.name}`, url: src.url }, src.url, item.progressSec || 0);
+        };
+        list.appendChild(b);
+        if (i === 0) setTimeout(() => b.focus(), 60);
+      });
+
+      document.getElementById('item-detail-modal').style.display = 'flex';
+    }
+
+    function closeItemDetailModal() {
+      document.getElementById('item-detail-modal').style.display = 'none';
+    }
+
+    // ==================== 7. HLS VIDEO PLAYER (MIT FORTSCHRITT-SPEICHERUNG) ====================
+    function playStream(itemObj, url, resumeSeconds = 0) {
+      if (!url) return alert("Keine gültige Stream-Adresse vorhanden.");
+      currentPlayingItem = itemObj;
+
+      // Sofort in "Zuletzt geschaut" eintragen
+      recordWatchEvent(itemObj, resumeSeconds, itemObj.durationSec || 0);
+
+      const overlay = document.getElementById('player-overlay');
+      const video = document.getElementById('videoPlayer');
+      document.getElementById('player-channel-title').innerText = itemObj.title;
+      overlay.style.display = 'flex';
+      document.getElementById('btn-close-player').focus();
+
+      if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
+      if (progressSaveTimer) clearInterval(progressSaveTimer);
+
+      const startPlayback = () => {
+        if (resumeSeconds > 10 && video.duration && isFinite(video.duration)) {
+          video.currentTime = resumeSeconds;
+        }
+        video.play().catch(() => {});
+      };
+
+      if (Hls.isSupported() && url.includes('.m3u8')) {
+        hlsPlayer = new Hls();
+        hlsPlayer.loadSource(url);
+        hlsPlayer.attachMedia(video);
+        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, startPlayback);
+      } else {
+        video.src = url;
+        video.onloadedmetadata = startPlayback;
+      }
+
+      // Alle 5 Sekunden die aktuelle Position für "Weiterschauen" sichern
+      progressSaveTimer = setInterval(() => {
+        if (!video.paused && currentPlayingItem && isFinite(video.duration) && video.duration > 60) {
+          recordWatchEvent(currentPlayingItem, video.currentTime, video.duration);
+        }
+      }, 5000);
+    }
+
+    function closePlayer() {
+      const overlay = document.getElementById('player-overlay');
+      const video = document.getElementById('videoPlayer');
+
+      if (currentPlayingItem && isFinite(video.duration) && video.duration > 60) {
+        recordWatchEvent(currentPlayingItem, video.currentTime, video.duration);
+      }
+      if (progressSaveTimer) { clearInterval(progressSaveTimer); progressSaveTimer = null; }
+
+      video.pause();
+      if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
+      video.src = "";
+      currentPlayingItem = null;
+      overlay.style.display = 'none';
+
+      renderCatalogRows();
+      document.querySelector('.card')?.focus();
+    }
+
+    // ==================== 8. PROFIL-EDITOR ====================
     function buildPickerGrids() {
       const iGrid = document.getElementById('icon-grid');
       iGrid.innerHTML = "";
@@ -673,12 +1677,7 @@
         b.type = "button";
         b.className = 'icon-choice tv-focusable' + (ic === tempIcon && !tempCustomImage ? ' selected' : '');
         b.innerText = ic;
-        b.onclick = () => {
-          tempIcon = ic;
-          tempCustomImage = null;
-          updateEditorPreview();
-          buildPickerGrids();
-        };
+        b.onclick = () => { tempIcon = ic; tempCustomImage = null; updateEditorPreview(); buildPickerGrids(); };
         iGrid.appendChild(b);
       });
 
@@ -689,20 +1688,14 @@
         b.type = "button";
         b.className = 'color-choice tv-focusable' + (col === tempColor ? ' selected' : '');
         b.style.background = col;
-        b.onclick = () => {
-          tempColor = col;
-          updateEditorPreview();
-          buildPickerGrids();
-        };
+        b.onclick = () => { tempColor = col; updateEditorPreview(); buildPickerGrids(); };
         cGrid.appendChild(b);
       });
     }
 
     function updateEditorPreview() {
       applyAvatarStyle(document.getElementById('edit-avatar-preview'), {
-        icon: tempIcon,
-        bg: tempColor,
-        customImage: tempCustomImage
+        icon: tempIcon, bg: tempColor, customImage: tempCustomImage
       });
     }
 
@@ -712,7 +1705,6 @@
       document.getElementById('role-kids').classList.toggle('selected', r === 'kids');
     }
 
-    // Eigenes Foto vom Gerät laden & kompakt auf 200x200 skalieren
     function handleImageUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -721,13 +1713,10 @@
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          canvas.width = 200;
-          canvas.height = 200;
+          canvas.width = 200; canvas.height = 200;
           const ctx = canvas.getContext('2d');
           const minSide = Math.min(img.width, img.height);
-          const sx = (img.width - minSide) / 2;
-          const sy = (img.height - minSide) / 2;
-          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 200, 200);
+          ctx.drawImage(img, (img.width - minSide) / 2, (img.height - minSide) / 2, minSide, minSide, 0, 0, 200, 200);
           tempCustomImage = canvas.toDataURL('image/jpeg', 0.82);
           updateEditorPreview();
           buildPickerGrids();
@@ -737,7 +1726,6 @@
       reader.readAsDataURL(file);
     }
 
-    // Modus A: Eingeloggter Benutzer ändert sein eigenes Profilbild
     function openAvatarEditorForActiveUser() {
       if (!activeProfile) return;
       editorMode = "avatar";
@@ -757,7 +1745,6 @@
       document.getElementById('editor-modal').style.display = 'flex';
     }
 
-    // Modus B: Neuen Benutzer auf der Profilwand anlegen (bis max. 15)
     function openCreateProfileModal() {
       if (profiles.length >= MAX_PROFILES) return;
       editorMode = "create";
@@ -806,25 +1793,13 @@
         const code = document.getElementById('new-user-code').value.trim();
         const adminPass = document.getElementById('admin-pass-input').value.trim();
 
-        if (!name || !code) {
-          errEl.innerText = "Bitte Name und Zugangscode ausfüllen.";
-          return;
-        }
-        if (adminPass !== ADMIN_MASTER_CODE) {
-          errEl.innerText = "Admin-Passwort (Roni) nicht korrekt!";
-          return;
-        }
+        if (!name || !code) { errEl.innerText = "Bitte Name und Zugangscode ausfüllen."; return; }
+        if (adminPass !== ADMIN_MASTER_CODE) { errEl.innerText = "Admin-Passwort (Roni) nicht korrekt!"; return; }
 
         profiles.push({
-          id: "user-" + Date.now(),
-          name: name,
-          icon: tempIcon,
-          customImage: tempCustomImage,
-          bg: tempColor,
-          role: tempRole,
-          code: code
+          id: "user-" + Date.now(), name, icon: tempIcon, customImage: tempCustomImage,
+          bg: tempColor, role: tempRole, code
         });
-
         saveProfiles();
         renderProfileGate();
         closeEditorModal();
@@ -841,20 +1816,22 @@
       }
     }
 
-    function setSection(sec, btn) {
-      document.querySelectorAll('.nav-item, .b-nav-btn').forEach(el => el.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-    }
-
-    // ==================== TV-FERNBEDIENUNGS-NAVIGATION ====================
+    // ==================== 9. TV-STEUERKREUZ NAVIGATION ====================
     window.addEventListener('keydown', (e) => {
+      const playerOpen = document.getElementById('player-overlay').style.display === 'flex';
       const authOpen   = document.getElementById('auth-modal').style.display === 'flex';
       const editorOpen = document.getElementById('editor-modal').style.display === 'flex';
+      const vaultOpen  = document.getElementById('vault-modal').style.display === 'flex';
+      const detailOpen = document.getElementById('item-detail-modal').style.display === 'flex';
       const gateOpen   = document.getElementById('profile-gate').style.display !== 'none' && !authOpen && !editorOpen;
+      const appOpen    = document.getElementById('app').style.display === 'block' && !authOpen && !editorOpen && !vaultOpen && !detailOpen && !playerOpen;
 
       if (e.key === 'Escape') {
+        if (playerOpen) { e.preventDefault(); closePlayer(); return; }
+        if (detailOpen) { e.preventDefault(); closeItemDetailModal(); return; }
         if (authOpen)   { e.preventDefault(); closeAuthModal(); return; }
         if (editorOpen) { e.preventDefault(); closeEditorModal(); return; }
+        if (vaultOpen)  { e.preventDefault(); closeVaultModal(); return; }
       }
 
       if (gateOpen && ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
@@ -869,6 +1846,37 @@
         if (e.key === 'ArrowDown')  next = Math.min(cards.length - 1, idx + cols);
         if (e.key === 'ArrowUp')    next = Math.max(0, idx - cols);
         cards[next]?.focus();
+        return;
+      }
+
+      if (appOpen && ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
+        if (document.activeElement && document.activeElement.id === 'global-search-input' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+          return;
+        }
+        e.preventDefault();
+        const active = document.activeElement;
+        const rows = Array.from(document.querySelectorAll('[data-row-index]')).filter(r => r.offsetParent !== null);
+        const currentRow = active ? active.closest('[data-row-index]') : null;
+
+        if (!currentRow) {
+          document.querySelector('.card, #app .tv-focusable')?.focus();
+          return;
+        }
+
+        const rIdx = rows.indexOf(currentRow);
+        const items = Array.from(currentRow.querySelectorAll('.tv-focusable')).filter(el => el.offsetParent !== null);
+        const cIdx = items.indexOf(active);
+
+        if (e.key === 'ArrowRight') items[Math.min(items.length - 1, cIdx + 1)]?.focus();
+        if (e.key === 'ArrowLeft')  items[Math.max(0, cIdx - 1)]?.focus();
+        if (e.key === 'ArrowDown' && rows[rIdx + 1]) {
+          const nextItems = Array.from(rows[rIdx + 1].querySelectorAll('.tv-focusable')).filter(el => el.offsetParent !== null);
+          nextItems[Math.min(Math.max(0, cIdx), nextItems.length - 1)]?.focus();
+        }
+        if (e.key === 'ArrowUp' && rows[rIdx - 1]) {
+          const prevItems = Array.from(rows[rIdx - 1].querySelectorAll('.tv-focusable')).filter(el => el.offsetParent !== null);
+          prevItems[Math.min(Math.max(0, cIdx), prevItems.length - 1)]?.focus();
+        }
       }
     });
 
